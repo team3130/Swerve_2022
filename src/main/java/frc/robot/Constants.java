@@ -21,5 +21,7 @@ public final class Constants {
     public static int CAN_LeftBackSpin = 7;
     public static int CAN_RightBack = 8;
     public static int CAN_RightBackSpin = 9;
+    public static int GearRatio = 10;
+    public static int TicksPerRevolution = 4096 * 10;
 
 }

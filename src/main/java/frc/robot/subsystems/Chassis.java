@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.GroupMotorControllers;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
@@ -32,15 +33,35 @@ public class Chassis extends SubsystemBase {
     LeftBackSpin = new WPI_TalonFX(Constants.CAN_LeftBackSpin);
     RightBack = new WPI_TalonFX(Constants.CAN_RightFront);
     RightBackSpin = new WPI_TalonFX(Constants.CAN_RightBackSpin);
-    //Spin = new MotorControllerGroup(LeftFrontSpin, RightFrontSpin, LeftBackSpin, RightBackSpin);
+    Spin = new MotorControllerGroup(LeftFrontSpin, RightFrontSpin, LeftBackSpin, RightBackSpin);
     General = new MotorControllerGroup(LeftFront, RightFront, LeftBack, RightBack);
   }
-  public void SpinToAngle (double SetPoint) {
-    LeftFrontSpin.
+  public double Kuglification(double Angle, WPI_TalonFX Motor) {
+      LeftFrontSpin.getSelectedSensorPosition();
+      LeftBackSpin.getSelectedSensorPosition();
+      RightBackSpin.getSelectedSensorPosition();
+      LeftBackSpin.getSelectedSensorPosition();
+      double SetPoint = Motor.getSelectedSensorPosition() + ((Constants.TicksPerRevolution / 360) * Angle);
+      return SetPoint;
   }
+    
+  public void SpinToAngle (double SetPoint) {
+    LeftFrontSpin.set(ControlMode.MotionMagic, SetPoint);
+    LeftBackSpin.set(ControlMode.MotionMagic, SetPoint);
+    RightFrontSpin.set(ControlMode.MotionMagic, SetPoint);
+    RightBackSpin.set(ControlMode.MotionMagic, SetPoint);
+  }
+
   public void Drive(double Angle, double Magnitude) {
     General.set(Magnitude);
+  }
 
+  public void Forwardy(double joystick){
+    General.set(joystick);
+  }
+
+  public void Spinny(double joystick) {
+    Spin.set(joystick);
   }
 
   @Override
@@ -52,4 +73,5 @@ public class Chassis extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
+
 }
