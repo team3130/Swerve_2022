@@ -1,11 +1,11 @@
-package frc.robot.sensors;
+package sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotMap;
+import frc.robot.Constants;
 
 public class Navx {
     //Instance Handling
@@ -50,7 +50,7 @@ public class Navx {
      */
     public static double getAngle() {
         if (m_bNavXPresent) {
-            return Math.IEEEremainder((m_navX.getAngle() + 360) * (RobotMap.kNavxReversed ? -1.0 : 1.0), 720);
+            return Math.IEEEremainder((m_navX.getAngle() + 360) * (Constants.kNavxReversed ? -1.0 : 1.0), 720); // converts navx heading angle infinite values to -360 to 360 even tho thats stupdi
         }
         return -1;
     }
@@ -73,7 +73,7 @@ public class Navx {
      * @return the rate of change of the heading of the robot in degrees per second.
      */
     public static double getRate() {
-        if (m_bNavXPresent) return m_navX.getRate() * (RobotMap.kNavxReversed ? -1.0 : 1.0);
+        if (m_bNavXPresent) return m_navX.getRate() * (Constants.kNavxReversed ? -1.0 : 1.0);
         return -1;
     }
 

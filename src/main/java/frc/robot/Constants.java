@@ -23,5 +23,9 @@ public final class Constants {
     public static int CAN_RightBackSpin = 9;
     public static int GearRatio = 10;
     public static int TicksPerRevolution = 4096 * 10;
+    public static double kMaxSpinnyVoltage = 5;
+    public static double kMaxForwardyVoltage = 10;
+
+    public static final boolean kNavxReversed = true;
 
 }
