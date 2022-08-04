@@ -45,9 +45,9 @@ public class PolarSmartDrive extends CommandBase {
         else if (x == 0 && y > 0) {
         m_chassis.SpinToAngle(new double[]{90}); // exceptions at tan pi/2
       } else if (x == 0 && y < 0) {
-        m_chassis.SpinToAngle(new double[]{});
+        m_chassis.SpinToAngle(new double[]{270});
       } else {
-        m_chassis.SpinToAngle(Math.tan(y / x)); // defining that tan is theta angle
+        m_chassis.SpinToAngle(new double[] {Math.tan(y / x)}); // defining that tan is theta angle
       }
 
         m_chassis.Forwardy(length); // how much to go forward

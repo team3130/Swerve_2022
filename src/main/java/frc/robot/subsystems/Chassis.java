@@ -56,6 +56,8 @@ public class Chassis extends SubsystemBase {
           list[i].configVoltageCompSaturation((i % 2) * Constants.kMaxSpinnyVoltage + (i % 2 - 1) * Constants.kMaxForwardyVoltage);
           list[i].enableVoltageCompensation(true);
           list[i].configOpenloopRamp(0.7);
+          list[i].configMotionCruiseVelocity(Constants.TicksPerRevolution, 0);
+          list[i].configMotionAcceleration(Constants.TicksPerRevolution*0.75, 0);
       }
       circleFixer = (Double[] angle) -> {
           angle[0] = ((angle[0] % 360) + 360) % 360;
