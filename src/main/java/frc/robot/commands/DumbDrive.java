@@ -35,12 +35,10 @@ public class DumbDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double moveSpeed = -RobotContainer.m_driverGamepad.getRawAxis(1); //joystick's y axis is inverted on Moose at least and we copy
-
+    double moveSpeed = -RobotContainer.m_driverGamepad.getRawAxis(1); //joystick's y-axis is inverted on Moose at least, and we copy
     double turnSpeed = RobotContainer.m_driverGamepad.getRawAxis(4);
 
     m_chassis.Forwardy(moveSpeed);
-
     m_chassis.Spinny(turnSpeed);
   }
 

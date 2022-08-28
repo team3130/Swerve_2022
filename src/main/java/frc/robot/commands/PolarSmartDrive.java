@@ -36,32 +36,22 @@ public class PolarSmartDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double y = RobotContainer.m_driverGamepad.getRawAxis(1);
-    double x = RobotContainer.m_driverGamepad.getRawAxis(2);
+    double y = -RobotContainer.m_driverGamepad.getRawAxis(1); // left stick y-axis (y-axis is inverted)
+    double x = RobotContainer.m_driverGamepad.getRawAxis(2); // right stick x-axis
     double length = Math.sqrt((x * x) + (y * y));
 
-    if ( ((Math.abs(x-0.075) < 0.075) && ((Math.abs(y-0.075) < 0.075)))) { // this is for very small joystick movements that we ignore
+    if (((Math.abs(x-0.075) < 0.075) && ((Math.abs(y-0.075) < 0.075)))) {} // this is for very small joystick movements that we ignore
+    else if (x == 0 && y > 0) {
+      m_chassis.SpinToAngle(new double[] {90}); // exceptions at tan pi/2
     }
-        else if (x == 0 && y > 0) {
-        m_chassis.SpinToAngle(new double[]{90}); // exceptions at tan pi/2
-      } else if (x == 0 && y < 0) {
-        m_chassis.SpinToAngle(new double[]{270});
-      } else {
-        m_chassis.SpinToAngle(new double[] {Math.tan(y / x)}); // defining that tan is theta angle
-      }
+    else if (x == 0 && y < 0) {
+      m_chassis.SpinToAngle(new double[] {270});
+    }
+    else {
+      m_chassis.SpinToAngle(new double[] {Math.tan(y / x)}); // defining that tan is theta angle
+    }
 
-        m_chassis.Forwardy(length); // how much to go forward
-
-
-   // (Navx.getAngle() + 360) % 360 - // heading point that navx finds in better numbers 0 - 360 instead of -360 to 360
-
-    // Theta = joystick setpoint minus the heading point
-        //  Now this theta point that it ends at is the new motor heading setpoint.
-
-
-            // circleFixer = (Double[] angle) -> {
-    //          angle[0] = ((angle[0] % 360) + 360) % 360;
-    //          angle[0] += ((angle[0] > 180) ? -360 : 0);
+    m_chassis.Forwardy(length); // how much to go forward
   }
 
   // Called once the command ends or is interrupted.

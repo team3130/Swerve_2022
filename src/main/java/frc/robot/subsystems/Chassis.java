@@ -32,7 +32,6 @@ public class Chassis extends SubsystemBase {
   private MotorControllerGroup Spin;
   private MotorControllerGroup General;
   private TalonFX[] list;
-  private final Consumer<Double[]> circleFixer;
 
   private int Sign = 1;
 
@@ -45,11 +44,12 @@ public class Chassis extends SubsystemBase {
       LeftBackSpin = new WPI_TalonFX(Constants.CAN_LeftBackSpin);
       RightBack = new WPI_TalonFX(Constants.CAN_RightFront);
       RightBackSpin = new WPI_TalonFX(Constants.CAN_RightBackSpin);
+
       Spin = new MotorControllerGroup(LeftFrontSpin, RightFrontSpin, LeftBackSpin, RightBackSpin);
       General = new MotorControllerGroup(LeftFront, RightFront, LeftBack, RightBack);
 
-
       list = new TalonFX[]{LeftFront, LeftFrontSpin, RightFront, RightFrontSpin, LeftBack, LeftBackSpin, RightBack, RightBackSpin};
+
       for (int i = 0; i < list.length; i++) {
           list[i].configFactoryDefault();
           list[i].setNeutralMode(NeutralMode.Brake);
@@ -59,10 +59,6 @@ public class Chassis extends SubsystemBase {
           list[i].configMotionCruiseVelocity(Constants.TicksPerRevolution, 0);
           list[i].configMotionAcceleration(Constants.TicksPerRevolution*0.75, 0);
       }
-      circleFixer = (Double[] angle) -> {
-          angle[0] = ((angle[0] % 360) + 360) % 360;
-          angle[0] += ((angle[0] > 180) ? -360 : 0);
-      };
   }
   public void Kuglification(double[] Angle) { // this is the second to last step, converting angles to ticks
       double Reading = LeftFront.getSelectedSensorPosition() % Constants.TicksPerRevolution;
@@ -74,7 +70,7 @@ public class Chassis extends SubsystemBase {
           if (Angle[0] >= Constants.TicksPerRevolution/2d) {
               Angle[0] = Angle[0] - Constants.TicksPerRevolution/2d;
           }
-          else{
+          else {
               Angle[0] = Angle[0] + Constants.TicksPerRevolution/2d;
           }
       }
@@ -84,27 +80,25 @@ public class Chassis extends SubsystemBase {
 
       if (Reading < Constants.TicksPerRevolution/4d && Angle[0] > (Constants.TicksPerRevolution/4d * 3d)) {
           double Level = ((int)(LeftFront.getSelectedSensorPosition() / Constants.TicksPerRevolution) *Constants.TicksPerRevolution);
-          Angle[0] = Angle[0] + Level  - Constants.TicksPerRevolution;
+          Angle[0] += Level - Constants.TicksPerRevolution;
       }
  }
     
-  public void SpinToAngle (double[] SetPoint) { // setter that is the last step to send to the motors with motion magic
+  public void SpinToAngle(double[] SetPoint) { // setter that is the last step to send to the motors with motion magic
       Kuglification(SetPoint);
-    LeftFrontSpin.set(ControlMode.MotionMagic, SetPoint[0]);
-    LeftBackSpin.set(ControlMode.MotionMagic, SetPoint[0]);
-    RightFrontSpin.set(ControlMode.MotionMagic, SetPoint[0]);
-    RightBackSpin.set(ControlMode.MotionMagic, SetPoint[0]);
+      LeftFrontSpin.set(ControlMode.MotionMagic, SetPoint[0]);
+      LeftBackSpin.set(ControlMode.MotionMagic, SetPoint[0]);
+      RightFrontSpin.set(ControlMode.MotionMagic, SetPoint[0]);
+      RightBackSpin.set(ControlMode.MotionMagic, SetPoint[0]);
   }
 
   public void Drive(double[] Angle, double Magnitude) {
-    General.set(Magnitude * Sign);
-    SpinToAngle(Angle);
-
+      General.set(Magnitude * Sign);
+      SpinToAngle(Angle);
   }
 
   public void Forwardy(double joystick) {
-    General.set(joystick);
-
+      General.set(joystick);
   }
 
   public void Spinny(double joystick) {
