@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 
 public class RobotContainer {
-  public static XboxController m_driverGamepad ;
+  public static XboxController m_driverGamepad;
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
