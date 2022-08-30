@@ -73,14 +73,15 @@ public class Chassis extends SubsystemBase {
         double reading = LeftFront.getSelectedSensorPosition() % TicksPerRevolution;
 
         // Basically converts the angle that we want to get to into ticks
-        angle[0] = (TicksPerRevolution / 360d * ((angle[0] + Navx.getAngle()) % 360));
+        // gets rid of any possibility of a negative number by adding 360 and modding again
+        angle[0] = ((TicksPerRevolution / 360d * ((angle[0] + Navx.getAngle()) % 360)) + 360) % 360;
 
         // if the angle that we need to travel is +- 90 degrees OR angle that we need t
         // o travel is greater than 370 and less than 360
         double angleToTravel = Math.abs(angle[0] - reading);
 
         // if we need to travel between and 90 and 180 degrees we will switch to the backup system instead
-        if (angleToTravel > NinetyDegreesInTicks && angleToTravel > TwoSeventyDegreesInTicks) {
+        if (angleToTravel > NinetyDegreesInTicks && angleToTravel >= TwoSeventyDegreesInTicks) {
             sign = -1;
             // flip because we are now traveling the wheels backwards
             if (angle[0] >= HundredEightyDegreesInTicks) {
