@@ -48,7 +48,8 @@ public class PolarSmartDrive extends CommandBase {
       m_chassis.SpinToAngle(new double[] {270});
     }
     else {
-      m_chassis.SpinToAngle(new double[] {Math.tan(y / x)}); // defining that tan is theta angle
+      // works but note that the output is -180 to 180
+      m_chassis.SpinToAngle(new double[] {Math.toDegrees(Math.atan2(y, x))}); // defining that tan is theta angle
     }
 
     m_chassis.Forwardy(length); // how much to go forward

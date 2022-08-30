@@ -5,19 +5,18 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.GroupMotorControllers;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import sensors.Navx;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import static frc.robot.Constants.TicksPerRevolution;
+import static frc.robot.Constants.NinetyDegreesInTicks;
+import static frc.robot.Constants.HundredEightyDegreesInTicks;
+import static frc.robot.Constants.TwoSeventyDegreesInTicks;
 
 public class Chassis extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -33,7 +32,7 @@ public class Chassis extends SubsystemBase {
   private MotorControllerGroup General;
   private TalonFX[] list;
 
-  private int Sign = 1;
+  private int sign = 1;
 
   public Chassis() {
       LeftFront = new WPI_TalonFX(Constants.CAN_LeftFront);
@@ -56,33 +55,61 @@ public class Chassis extends SubsystemBase {
           list[i].configVoltageCompSaturation((i % 2) * Constants.kMaxSpinnyVoltage + (i % 2 - 1) * Constants.kMaxForwardyVoltage);
           list[i].enableVoltageCompensation(true);
           list[i].configOpenloopRamp(0.7);
-          list[i].configMotionCruiseVelocity(Constants.TicksPerRevolution, 0);
-          list[i].configMotionAcceleration(Constants.TicksPerRevolution*0.75, 0);
+          list[i].configMotionCruiseVelocity(TicksPerRevolution, 0);
+          list[i].configMotionAcceleration(TicksPerRevolution*0.75, 0);
       }
   }
-  public void Kuglification(double[] Angle) { // this is the second to last step, converting angles to ticks
-      double Reading = LeftFront.getSelectedSensorPosition() % Constants.TicksPerRevolution;
-      Angle[0] = ((Constants.TicksPerRevolution / 360d) * ((Angle[0] + Navx.getAngle() + 360) % 360) );
-      if ((Math.abs(Angle[0] - (Reading)) > (Constants.TicksPerRevolution/4d)) ||
-              (Math.abs(Angle[0] - (Reading)) > (Constants.TicksPerRevolution/4d * 3d)) &&
-              Math.abs(Angle[0] - (Reading)) < Constants.TicksPerRevolution) {
-          Sign = -1;
-          if (Angle[0] >= Constants.TicksPerRevolution/2d) {
-              Angle[0] = Angle[0] - Constants.TicksPerRevolution/2d;
-          }
-          else {
-              Angle[0] = Angle[0] + Constants.TicksPerRevolution/2d;
-          }
-      }
-          else {
-              Sign = 1;
-          }
 
-      if (Reading < Constants.TicksPerRevolution/4d && Angle[0] > (Constants.TicksPerRevolution/4d * 3d)) {
-          double Level = ((int)(LeftFront.getSelectedSensorPosition() / Constants.TicksPerRevolution) *Constants.TicksPerRevolution);
-          Angle[0] += Level - Constants.TicksPerRevolution;
-      }
- }
+    /**
+     * Takes an angle to turn to and converts it to ticks.
+     * This will be relative to the direction that the bot faces when it starts
+     * In order to make it relative to where the controller is facing we would have
+     * to run into a wall.
+     * @param angle the angle we are turning to (passed as an array because java doesn't have references)
+     *              The angle being read on the controller
+     */
+    public void Kuglification(double[] angle) {
+        // angle being read (modded to be relative)
+        double reading = LeftFront.getSelectedSensorPosition() % TicksPerRevolution;
+
+        // Basically converts the angle that we want to get to into ticks
+        angle[0] = (TicksPerRevolution / 360d * ((angle[0] + Navx.getAngle()) % 360));
+
+        // if the angle that we need to travel is +- 90 degrees OR angle that we need t
+        // o travel is greater than 370 and less than 360
+        double angleToTravel = Math.abs(angle[0] - reading);
+
+        // if we need to travel between and 90 and 180 degrees we will switch to the backup system instead
+        if (angleToTravel > NinetyDegreesInTicks && angleToTravel > TwoSeventyDegreesInTicks) {
+            sign = -1;
+            // flip because we are now traveling the wheels backwards
+            if (angle[0] >= HundredEightyDegreesInTicks) {
+                angle[0] -= HundredEightyDegreesInTicks;
+            }
+            else {
+                angle[0] += HundredEightyDegreesInTicks;
+            }
+        }
+        else {
+            // assert that we are going forward
+            sign = 1;
+        }
+
+        // gets the number in ticks that is closest to an equivalent value of 360 in the tick group
+        double level = ((int) (LeftFront.getSelectedSensorPosition() / TicksPerRevolution) * TicksPerRevolution);
+
+        // if coming from top and passing over the break then you need to down-shift the set point
+        if (reading < NinetyDegreesInTicks && angle[0] > TwoSeventyDegreesInTicks) {
+            level -= TicksPerRevolution;
+        }
+
+        // if coming from bottom and going up you need to up-shift the top
+        else if (reading > TwoSeventyDegreesInTicks && angle[0] < NinetyDegreesInTicks) {
+            level += TicksPerRevolution;
+        }
+
+        angle[0] += level;
+    }
     
   public void SpinToAngle(double[] SetPoint) { // setter that is the last step to send to the motors with motion magic
       Kuglification(SetPoint);
@@ -93,12 +120,12 @@ public class Chassis extends SubsystemBase {
   }
 
   public void Drive(double[] Angle, double Magnitude) {
-      General.set(Magnitude * Sign);
       SpinToAngle(Angle);
+      General.set(Magnitude * sign);
   }
 
   public void Forwardy(double joystick) {
-      General.set(joystick);
+      General.set(joystick * sign);
   }
 
   public void Spinny(double joystick) {
