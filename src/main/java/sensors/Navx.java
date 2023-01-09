@@ -50,7 +50,7 @@ public class Navx {
      */
     public static double getAngle() {
         if (m_bNavXPresent) {
-            return Math.IEEEremainder((m_navX.getAngle() + 360) * (Constants.kNavxReversed ? -1.0 : 1.0), 720); // converts navx heading angle infinite values to -360 to 360 even tho thats stupdi
+            return Math.IEEEremainder((m_navX.getAngle() + 360) * (Constants.kNavxReversed ? -1.0 : 1.0), 720); // converts navx heading angle infinite values to -360 to 360 even tho thats stupid
         }
         return -1;
     }

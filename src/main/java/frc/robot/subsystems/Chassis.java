@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -41,7 +42,7 @@ public class Chassis extends SubsystemBase {
       RightFrontSpin = new WPI_TalonFX(Constants.CAN_RightFrontSpin);
       LeftBack = new WPI_TalonFX(Constants.CAN_LeftBack);
       LeftBackSpin = new WPI_TalonFX(Constants.CAN_LeftBackSpin);
-      RightBack = new WPI_TalonFX(Constants.CAN_RightFront);
+      RightBack = new WPI_TalonFX(Constants.CAN_RightBack);
       RightBackSpin = new WPI_TalonFX(Constants.CAN_RightBackSpin);
 
       Spin = new MotorControllerGroup(LeftFrontSpin, RightFrontSpin, LeftBackSpin, RightBackSpin);
