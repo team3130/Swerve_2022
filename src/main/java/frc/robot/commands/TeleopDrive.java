@@ -4,42 +4,43 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chassis;
-import frc.robot.subsystems.ExampleSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class DumbDrive extends CommandBase {
+public class TeleopDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Chassis m_chassis;
-  private final RobotContainer m_robotcontainer;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param chassis The subsystem used by this command.
    */
-  public DumbDrive(Chassis chassis, RobotContainer robotContainer) {
+  public TeleopDrive(Chassis chassis) {
     m_chassis = chassis;
+    // Use addRequirements() here to declare subsystem dependencies.
     m_requirements.add(chassis);
-    m_robotcontainer = robotContainer;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double moveSpeed = -RobotContainer.m_driverGamepad.getRawAxis(1); //joystick's y-axis is inverted on Moose at least, and we copy
-    double turnSpeed = RobotContainer.m_driverGamepad.getRawAxis(4);
+    double y = -RobotContainer.m_driverGamepad.getRawAxis(1); // left stick y-axis (y-axis is inverted)
+    double x = RobotContainer.m_driverGamepad.getRawAxis(2); // left stick x-axis
+    double theta = RobotContainer.m_driverGamepad.getRawAxis(4); // right stick x axis
 
-    m_chassis.Forwardy(moveSpeed);
-    m_chassis.Spinny(turnSpeed);
+    Translation2d sped = new Translation2d(x, y);
+
+
   }
 
   // Called once the command ends or is interrupted.

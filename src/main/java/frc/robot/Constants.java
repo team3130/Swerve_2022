@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -28,6 +30,18 @@ public final class Constants {
     public static final int TwoSeventyDegreesInTicks = TicksPerRevolution / 4 * 3;
     public static double kMaxSpinnyVoltage = 5;
     public static double kMaxForwardyVoltage = 10;
+
+    // the left-to-right distance between the drivetrain wheels, should be measured from center to center
+	public static final double trackWidth_m = 1.0;
+	// the front-to-back distance between the drivetrain wheels, should be measured from center to center
+	public static final double wheelBase_m = 1.0;
+
+	public static final Translation2d[] moduleTranslations = {
+		new Translation2d(wheelBase_m / 2.0, trackWidth_m / 2.0),
+		new Translation2d(wheelBase_m / 2.0, -trackWidth_m / 2.0),
+		new Translation2d(-wheelBase_m / 2.0, trackWidth_m / 2.0),
+		new Translation2d(-wheelBase_m / 2.0, -trackWidth_m / 2.0)
+	};
 
     public static final boolean kNavxReversed = true;
 
