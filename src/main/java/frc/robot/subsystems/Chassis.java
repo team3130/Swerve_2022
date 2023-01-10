@@ -66,30 +66,31 @@ public class Chassis extends SubsystemBase {
      * This will be relative to the direction that the bot faces when it starts
      * In order to make it relative to where the controller is facing we would have
      * to run into a wall.
-     * @param angle the angle we are turning to (passed as an array because java doesn't have references)
+     * @param controllerAngle the angle we are turning to (passed as an array because java doesn't have references)
      *              The angle being read on the controller
      */
-    public void Kuglification(double[] angle) {
+    public double Kuglification(double controllerAngle) {
+        double output;
         // angle being read (modded to be relative)
-        double reading = LeftFront.getSelectedSensorPosition() % TicksPerRevolution;
+        double motorReading = LeftFront.getSelectedSensorPosition() % TicksPerRevolution;
 
         // Basically converts the angle that we want to get to into ticks
         // gets rid of any possibility of a negative number by adding 360 and modding again
-        angle[0] = ((TicksPerRevolution / 360d * ((angle[0] + Navx.getAngle()) % 360)) + 360) % 360;
+        output = ((TicksPerRevolution / 360d * ((controllerAngle - Navx.getAngle()) % 360)) + 360) % 360;
 
         // if the angle that we need to travel is +- 90 degrees OR angle that we need t
         // o travel is greater than 370 and less than 360
-        double angleToTravel = Math.abs(angle[0] - reading);
+        double angleToTravel = Math.abs(output - motorReading);
 
         // if we need to travel between and 90 and 180 degrees we will switch to the backup system instead
-        if (angleToTravel > NinetyDegreesInTicks && angleToTravel >= TwoSeventyDegreesInTicks) {
+        if (angleToTravel > NinetyDegreesInTicks && angleToTravel <= TwoSeventyDegreesInTicks) {
             sign = -1;
             // flip because we are now traveling the wheels backwards
-            if (angle[0] >= HundredEightyDegreesInTicks) {
-                angle[0] -= HundredEightyDegreesInTicks;
+            if (output >= HundredEightyDegreesInTicks) {
+                output -= HundredEightyDegreesInTicks;
             }
             else {
-                angle[0] += HundredEightyDegreesInTicks;
+                output += HundredEightyDegreesInTicks;
             }
         }
         else {
@@ -101,27 +102,28 @@ public class Chassis extends SubsystemBase {
         double level = ((int) (LeftFront.getSelectedSensorPosition() / TicksPerRevolution) * TicksPerRevolution);
 
         // if coming from top and passing over the break then you need to down-shift the set point
-        if (reading < NinetyDegreesInTicks && angle[0] > TwoSeventyDegreesInTicks) {
+        if (motorReading < NinetyDegreesInTicks && angleToTravel > TwoSeventyDegreesInTicks) {
             level -= TicksPerRevolution;
         }
 
         // if coming from bottom and going up you need to up-shift the top
-        else if (reading > TwoSeventyDegreesInTicks && angle[0] < NinetyDegreesInTicks) {
+        else if (motorReading > TwoSeventyDegreesInTicks && angleToTravel < NinetyDegreesInTicks) {
             level += TicksPerRevolution;
         }
 
-        angle[0] += level;
+        // our output value
+        return output + level;
     }
     
-  public void SpinToAngle(double[] SetPoint) { // setter that is the last step to send to the motors with motion magic
-      Kuglification(SetPoint);
-      LeftFrontSpin.set(ControlMode.MotionMagic, SetPoint[0]);
-      LeftBackSpin.set(ControlMode.MotionMagic, SetPoint[0]);
-      RightFrontSpin.set(ControlMode.MotionMagic, SetPoint[0]);
-      RightBackSpin.set(ControlMode.MotionMagic, SetPoint[0]);
+  public void SpinToAngle(double SetPoint) { // setter that is the last step to send to the motors with motion magic
+      SetPoint = Kuglification(SetPoint);
+      LeftFrontSpin.set(ControlMode.MotionMagic, SetPoint);
+      LeftBackSpin.set(ControlMode.MotionMagic, SetPoint);
+      RightFrontSpin.set(ControlMode.MotionMagic, SetPoint);
+      RightBackSpin.set(ControlMode.MotionMagic, SetPoint);
   }
 
-  public void Drive(double[] Angle, double Magnitude) {
+  public void Drive(double Angle, double Magnitude) {
       SpinToAngle(Angle);
       General.set(Magnitude * sign);
   }
