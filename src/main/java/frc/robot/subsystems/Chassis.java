@@ -14,27 +14,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.swerve.Side;
 import frc.robot.swerve.SwerveModule;
 import sensors.Navx;
 
-import static frc.robot.Constants.TicksPerRevolution;
-import static frc.robot.Constants.NinetyDegreesInTicks;
-import static frc.robot.Constants.HundredEightyDegreesInTicks;
-import static frc.robot.Constants.TwoSeventyDegreesInTicks;
 
 public class Chassis extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  private WPI_TalonFX LeftFront;
-  private WPI_TalonFX LeftFrontSpin;
-  private WPI_TalonFX RightFront;
-  private WPI_TalonFX RightFrontSpin;
-  private WPI_TalonFX LeftBack;
-  private WPI_TalonFX LeftBackSpin;
-  private WPI_TalonFX RightBack;
-  private WPI_TalonFX RightBackSpin;
 
   private SwerveDriveKinematics m_kinematics;
   private SwerveDrivePoseEstimator m_odometry;
@@ -42,38 +31,16 @@ public class Chassis extends SubsystemBase {
   private SwerveModulePosition[] modulePositions;
   private SwerveModule[] modules;
 
-  private MotorControllerGroup Spin;
-  private MotorControllerGroup General;
-  private TalonFX[] list;
-
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-  private int sign = 1;
+
+  private Navx Gyro = Navx.GetInstance();
+
+  public Chassis(){
+      this (new Pose2d(), new Rotation2d());
+  }
 
   public Chassis(Pose2d startingPos, Rotation2d startingRotation) {
-      LeftFront = new WPI_TalonFX(Constants.CAN_LeftFront);
-      LeftFrontSpin = new WPI_TalonFX(Constants.CAN_LeftFrontSpin);
-      RightFront = new WPI_TalonFX(Constants.CAN_RightFront);
-      RightFrontSpin = new WPI_TalonFX(Constants.CAN_RightFrontSpin);
-      LeftBack = new WPI_TalonFX(Constants.CAN_LeftBack);
-      LeftBackSpin = new WPI_TalonFX(Constants.CAN_LeftBackSpin);
-      RightBack = new WPI_TalonFX(Constants.CAN_RightBack);
-      RightBackSpin = new WPI_TalonFX(Constants.CAN_RightBackSpin);
-
-      Spin = new MotorControllerGroup(LeftFrontSpin, RightFrontSpin, LeftBackSpin, RightBackSpin);
-      General = new MotorControllerGroup(LeftFront, RightFront, LeftBack, RightBack);
-
-      list = new TalonFX[]{LeftFront, LeftFrontSpin, RightFront, RightFrontSpin, LeftBack, LeftBackSpin, RightBack, RightBackSpin};
-
-      for (int i = 0; i < list.length; i++) {
-          list[i].configFactoryDefault();
-          list[i].setNeutralMode(NeutralMode.Brake);
-          list[i].configVoltageCompSaturation((i % 2) * Constants.kMaxSpinnyVoltage + (i % 2 - 1) * Constants.kMaxForwardyVoltage);
-          list[i].enableVoltageCompensation(true);
-          list[i].configOpenloopRamp(0.7);
-          list[i].configMotionCruiseVelocity(TicksPerRevolution, 0);
-          list[i].configMotionAcceleration(TicksPerRevolution * 0.75, 0);
-      }
 
       m_kinematics = new SwerveDriveKinematics(Constants.moduleTranslations);
       modulePositions = new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(),
@@ -84,9 +51,31 @@ public class Chassis extends SubsystemBase {
 
       chassisSpeeds = new ChassisSpeeds(0, 0, 0);
 
+      modules = new SwerveModule[4];
+      modules[Side.LEFT_FRONT] = new SwerveModule(Side.LEFT_FRONT);
+      modules[Side.LEFT_BACK] = new SwerveModule(Side.LEFT_BACK);
+      modules[Side.RIGHT_FRONT] = new SwerveModule(Side.RIGHT_FRONT);
+      modules[Side.RIGHT_BACK] = new SwerveModule(Side.RIGHT_BACK);
+
+      new Thread(()->{
+          try {
+              Thread.sleep(1000);
+              zeroHeading();
+          } catch (Exception e) {
+          }
+      }).start();
 
 
+  }
+  public void zeroHeading(){
+      Navx.resetNavX();
+  }
+  public double getHeading() {
+      return Math.IEEEremainder(Navx.getAngle(), 360);
+  }
 
+  public Rotation2d getRotation2d(){
+      return Rotation2d.fromDegrees(getHeading());
   }
 
 
@@ -95,6 +84,32 @@ public class Chassis extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  public void stopModules(){
+      modules[Side.LEFT_FRONT].stop();
+      modules[Side.LEFT_BACK].stop();
+      modules[Side.RIGHT_FRONT].stop();
+      modules[Side.RIGHT_BACK].stop();
+  }
+
+  public void normalizeWheelSpeeds(SwerveModuleState[] desiredStates) {
+      double max = desiredStates[0].speedMetersPerSecond;
+      for (int i = 1 ; i< desiredStates.length ; i++ ) {
+         Math.max(desiredStates[i].speedMetersPerSecond, max);
+      }
+      for (int i =0 ; i<desiredStates.length ; i++) {
+          desiredStates[i].speedMetersPerSecond /= max;
+      }
+  }
+
+  public SwerveDriveKinematics getKinematics() {
+      return m_kinematics;
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+      for (int i = 0 ; i< desiredStates.length ; i++) {
+          modules[i].setDesiredState(desiredStates[i]);
+      }
+  }
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation

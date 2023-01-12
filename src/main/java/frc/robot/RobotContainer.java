@@ -6,7 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.DumbDrive;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Chassis;
 
 /**
@@ -27,7 +27,7 @@ public class RobotContainer {
     
     m_driverGamepad = new XboxController(0);
 
-    m_chassis.setDefaultCommand(new DumbDrive(m_chassis, this));
+    m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
     // m_chassis.setDefaultCommand(new PolarSmartDrive(m_chassis));
   }
 
