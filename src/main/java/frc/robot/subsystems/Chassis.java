@@ -15,11 +15,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.swerve.Side;
 import frc.robot.swerve.SwerveModule;
 import sensors.Navx;
+
+import java.util.Arrays;
 
 
 public class Chassis extends SubsystemBase {
@@ -33,8 +37,10 @@ public class Chassis extends SubsystemBase {
 
   private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-
   private Navx Gyro = Navx.GetInstance();
+
+  private NetworkTableEntry Kp = SmartDashboard.getEntry("swerve p");
+  private double lastKpRead = Constants.SwerveKp;
 
   public Chassis(){
       this (new Pose2d(), new Rotation2d());
@@ -80,10 +86,21 @@ public class Chassis extends SubsystemBase {
       return Rotation2d.fromDegrees(getHeading());
   }
 
+  public void outputToShuffleboard() {
+      if (lastKpRead != Kp.getDouble(lastKpRead) ){
+          lastKpRead = Kp.getDouble(lastKpRead);
+          modules[Side.LEFT_FRONT].updatePValue(lastKpRead);
+          modules[Side.LEFT_BACK].updatePValue(lastKpRead);
+          modules[Side.RIGHT_FRONT].updatePValue(lastKpRead);
+          modules[Side.RIGHT_BACK].updatePValue(lastKpRead);
+      }
+  }
+
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 
   public void stopModules(){

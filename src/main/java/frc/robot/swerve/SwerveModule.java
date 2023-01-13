@@ -57,6 +57,9 @@ public class SwerveModule {
         return driveEncoder.getAbsolutePosition(); //TODO convert to rads
     }
 
+    public void updatePValue(double p) {
+        turningPidController.setP(p);
+    }
     public void resetEncoders(){
         angley.setSelectedSensorPosition(0);
         spinny.setSelectedSensorPosition(0);
