@@ -101,7 +101,7 @@ public class Chassis extends SubsystemBase {
   public void normalizeWheelSpeeds(SwerveModuleState[] desiredStates) {
       double max = desiredStates[0].speedMetersPerSecond;
       for (int i = 1 ; i< desiredStates.length ; i++ ) {
-         Math.max(desiredStates[i].speedMetersPerSecond, max);
+         max = Math.max(desiredStates[i].speedMetersPerSecond, max);
       }
       for (int i =0 ; i<desiredStates.length ; i++) {
           desiredStates[i].speedMetersPerSecond /= max;
