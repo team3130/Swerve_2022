@@ -100,7 +100,9 @@ public class Chassis extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    for (int i = 0; i < modules.length; i++) {
+        modules[i].outputToShuffleboard();
+    }
   }
 
   public void stopModules(){

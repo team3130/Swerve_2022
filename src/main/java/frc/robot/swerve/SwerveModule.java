@@ -3,25 +3,28 @@ package frc.robot.swerve;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import org.opencv.core.Mat;
 
 public class SwerveModule {
-    private TalonFX angley;
-    private TalonFX spinny;
+    private WPI_TalonFX angley;
+    private WPI_TalonFX spinny;
     private CANCoder driveEncoder;
     private PIDController turningPidController;
     private double absoluteEncoderOffset;
+    private NetworkTableEntry encoderType;
 
     public SwerveModule(int side) {
-        angley = new TalonFX(Constants.turningId[side]);
-        spinny = new TalonFX(Constants.spinningId[side]);
+        angley = new WPI_TalonFX(Constants.turningId[side]);
+        spinny = new WPI_TalonFX(Constants.spinningId[side]);
         driveEncoder = new CANCoder(Constants.CANCoders[side]);
+        encoderType = SmartDashboard.getEntry("encoder " + Constants.CANCoders[side]);
         turningPidController = new PIDController(Constants.SwerveKp, Constants.SwerveKi, Constants.SwerveKd, Constants.SwerveKf);
         angley.configFactoryDefault();
         angley.setNeutralMode(NeutralMode.Brake);
@@ -53,16 +56,20 @@ public class SwerveModule {
     public double getTurningVelocity() {
         return angley.getSelectedSensorVelocity()/Constants.TicksPerRevolutionAngle;
     }
-    public double getAbsolutEncoderRad() {
+    public double getAbsolutEncoderTicks() {
         return driveEncoder.getAbsolutePosition(); //TODO convert to rads
     }
 
     public void updatePValue(double p) {
         turningPidController.setP(p);
     }
+
+    public void outputToShuffleboard() {
+        encoderType.setDouble(getAbsolutEncoderTicks());
+    }
     public void resetEncoders(){
-        angley.setSelectedSensorPosition(0);
-        spinny.setSelectedSensorPosition(0);
+        angley.setSelectedSensorPosition(getAbsolutEncoderTicks());
+        spinny.setSelectedSensorPosition(getAbsolutEncoderTicks());
     }
 
     public SwerveModuleState getState() {

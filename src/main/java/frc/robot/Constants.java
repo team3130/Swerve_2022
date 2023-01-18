@@ -16,14 +16,14 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int CAN_LeftFront = 2;
-    public static int CAN_LeftFrontSpin = 3;
-    public static int CAN_RightFront = 4;
-    public static int CAN_RightFrontSpin = 5;
-    public static int CAN_LeftBack = 6;
-    public static int CAN_LeftBackSpin = 7;
-    public static int CAN_RightBack = 8;
-    public static int CAN_RightBackSpin = 9;
+    public static int CAN_LeftFrontSteer = 37;
+    public static int CAN_LeftFrontDrive = 17;
+    public static int CAN_RightFrontSteer = 14;
+    public static int CAN_RightFrontDrive = 5;
+    public static int CAN_LeftBackSteer = 7;
+    public static int CAN_LeftBackDrive = 12;
+    public static int CAN_RightBackSteer = 13;
+    public static int CAN_RightBackDrive = 29;
     public static int SpinnyGearRatio = 10;
     public static int AngleyGearRatio = 10;
 
@@ -46,10 +46,10 @@ public final class Constants {
     public static final boolean kNavxReversed = true;
     public static double wheelDiameter = Units.inchesToMeters(3.86);
     public static double TicksPerRevolutionSpin = 4096 * SpinnyGearRatio * wheelDiameter  * Math.PI;
-    public static int[] turningId = new int[] {CAN_LeftFront, CAN_LeftBack, CAN_RightFront, CAN_RightBack};
-    public static int[] spinningId = new int[] {CAN_LeftFrontSpin, CAN_LeftBackSpin, CAN_RightFrontSpin, CAN_RightBackSpin};
+    public static int[] turningId = new int[] {CAN_LeftFrontSteer, CAN_LeftBackSteer, CAN_RightFrontSteer, CAN_RightBackSteer};
+    public static int[] spinningId = new int[] {CAN_LeftFrontDrive, CAN_LeftBackDrive, CAN_RightFrontDrive, CAN_RightBackDrive};
 
-    public static int[] CANCoders = new int[] {10, 11, 12, 13};
+    public static int[] CANCoders = new int[] {9, 3, 36, 11};
 
     public static double SwerveKp = 3;
     public static double SwerveKi = 0;
