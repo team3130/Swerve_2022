@@ -16,35 +16,50 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int CAN_LeftFrontSteer = 37;
-    public static int CAN_LeftFrontDrive = 17;
-    public static int CAN_RightFrontSteer = 14;
-    public static int CAN_RightFrontDrive = 5;
-    public static int CAN_LeftBackSteer = 7;
-    public static int CAN_LeftBackDrive = 12;
-    public static int CAN_RightBackSteer = 13;
-    public static int CAN_RightBackDrive = 29;
-    public static int SpinnyGearRatio = 10;
-    public static int AngleyGearRatio = 10;
-
-    public static int CANCoderTopRight = 10;
-    public static int CANCoderBottomRight = 11;
-    public static int CANCoderTopLeft = 12;
-    public static int CANCoderBottomLeft = 13;
+    /**
+     * CAN
+     */
+    public final static int CAN_LeftFrontSteer = 37;
+    public final static int CAN_LeftFrontDrive = 17;
+    public final static int CAN_RightFrontSteer = 14;
+    public final static int CAN_RightFrontDrive = 5;
+    public final static int CAN_LeftBackSteer = 7;
+    public final static int CAN_LeftBackDrive = 12;
+    public final static int CAN_RightBackSteer = 13;
+    public final static int CAN_RightBackDrive = 29;
+    public final static int CANCoderTopRight = 9;
+    public final static int CANCoderBottomRight = 3;
+    public final static int CANCoderTopLeft = 36;
+    public final static int CANCoderBottomLeft = 11;
     // Order should match side
-    public static int[] CANCoders = new int[] {CANCoderTopRight,CANCoderBottomRight, CANCoderTopLeft, CANCoderBottomLeft};
-
+    public static final int[] turningId = new int[] {CAN_LeftFrontSteer, CAN_LeftBackSteer, CAN_RightFrontSteer, CAN_RightBackSteer};
+    public static final int[] spinningId = new int[] {CAN_LeftFrontDrive, CAN_LeftBackDrive, CAN_RightFrontDrive, CAN_RightBackDrive};
+    public final static int[] CANCoders = new int[] {CANCoderTopLeft, CANCoderBottomLeft, CANCoderTopRight, CANCoderBottomRight};
+    /**
+     * Encoder offsets
+     */
+    public static final int kTopLeftOffset = 0;
+    public static final int kBottomLeftOffset = 0;
+    public static final int kTopRightOffset = 0;
+    public static final int kBottomRightOffset = 0;
+    public static final int[] kCanCoderOffsets = new int[] {kTopLeftOffset, kBottomLeftOffset, kTopRightOffset, kBottomRightOffset};
     /**
      * Gear ratio and ticks per rev
      */
-    public static double SpinnyGearRatio = 10;
-    public static double AngleyGearRatio = 10;
+    public final static double kDriveGearRatio = 10;
+    public final static double kSteerGearRatio = 10;
+    public static final double kEncoderGearRatio = 10;
+    public static final double kEncoderResolution = 2048;
 
-    public static int CanCoderTicksPerRevolution = 10;
-
-    public static double TicksPerRevolutionAngle = 4096 * AngleyGearRatio; // divide ticks by this number
-    public static double kMaxSpinnyVoltage = 5;
-    public static double kMaxForwardyVoltage = 10;
+    public final static int CanCoderTicksPerRevolution = 10;
+    public static final double kWheelDiameter = Units.inchesToMeters(3.86);
+    public static final double SteerTicksToRads = 1/(kEncoderResolution) * kSteerGearRatio; // multiply by position
+    public static final double SteerTicksToRadsPerSecond = SteerTicksToRads * 10; // multiply by velocity
+    public final static double DriveTicksToMeters = kDriveGearRatio * Math.PI * kWheelDiameter * (1/kEncoderResolution); // multiply by
+    public static final double DriveTicksToMetersPerSecond = DriveTicksToMeters * 10; // multiply by velocity
+    public static final double CanCoderTicksToRads = kEncoderGearRatio;
+    public final static double kMaxSteerVoltage = 5d;
+    public final static double kMaxDriveVoltage = 9d;
 
     /**
      * Length and width as measured as distances between center of wheels
@@ -76,20 +91,13 @@ public final class Constants {
 	};
 
     public static final boolean kNavxReversed = true;
-    public static double wheelDiameter = Units.inchesToMeters(3.86);
-    public static double TicksPerRevolutionSpin = 4096 * SpinnyGearRatio * wheelDiameter  * Math.PI;
-    public static int[] turningId = new int[] {CAN_LeftFrontSteer, CAN_LeftBackSteer, CAN_RightFrontSteer, CAN_RightBackSteer};
-    public static int[] spinningId = new int[] {CAN_LeftFrontDrive, CAN_LeftBackDrive, CAN_RightFrontDrive, CAN_RightBackDrive};
 
-    public static int[] CANCoders = new int[] {9, 3, 36, 11};
 
     public static double SwerveKp = 3;
     public static double SwerveKi = 0;
     public static double SwerveKd = 0;
     public static double SwerveKf = 0;
 
-    public static double MaxSpinnyVoltage = 10;
-    public static double MaxAngleyVoltage = 5;
 
     public static double openLoopRampRate = 0.7;
 

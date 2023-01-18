@@ -15,10 +15,9 @@ import frc.robot.subsystems.Chassis;
 
 /** An example command that uses an example subsystem. */
 public class TeleopDrive extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Chassis m_chassis;
 
-  private final SlewRateLimiter xLimiter, yLimiter,turningLimiter;
+  private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
 
   /**
    * Creates a new ExampleCommand.
@@ -45,15 +44,15 @@ public class TeleopDrive extends CommandBase {
   public void execute() {
     double y = -RobotContainer.m_driverGamepad.getRawAxis(1); // left stick y-axis (y-axis is inverted)
     double x = RobotContainer.m_driverGamepad.getRawAxis(2); // left stick x-axis
-    double theta = RobotContainer.m_driverGamepad.getRawAxis(4); // right stick x axis
+    double theta = RobotContainer.m_driverGamepad.getRawAxis(4); // right stick x-axis
 
-    Translation2d sped = new Translation2d(x, y);
+    // apply dead-band
     x = Math.abs(x) > Constants.kDeadband ? x : 0.0;
     y = Math.abs(y) > Constants.kDeadband ? y : 0.0;
     theta = Math.abs(theta) > Constants.kDeadband ? theta : 0.0;
 
     x = xLimiter.calculate(x) * Constants.kPhysicalMaxSpeedMetersPerSecond;
-    y = xLimiter.calculate(y) * Constants.kPhysicalMaxSpeedMetersPerSecond;
+    y = yLimiter.calculate(y) * Constants.kPhysicalMaxSpeedMetersPerSecond;
     theta = turningLimiter.calculate(theta) * Constants.kPhysicalMaxSpeedMetersPerSecond;
 
     SwerveModuleState[] moduleStates = m_chassis.getKinematics().toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(x,y,theta,m_chassis.getRotation2d()));

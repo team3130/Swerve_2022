@@ -27,10 +27,7 @@ public class Chassis extends SubsystemBase {
 
   private SwerveModulePosition[] modulePositions;
   private SwerveModule[] modules;
-
-  private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-
-  private Navx Gyro = Navx.GetInstance();
+  private final Navx Gyro = Navx.GetInstance();
 
   private NetworkTableEntry Kp = SmartDashboard.getEntry("swerve p");
   private double lastKpRead = Constants.SwerveKp;
@@ -48,8 +45,6 @@ public class Chassis extends SubsystemBase {
       // odometry wrapper class that has functionality for cameras that report position with latency
       m_odometry = new SwerveDrivePoseEstimator(m_kinematics, startingRotation, modulePositions, startingPos);
 
-      chassisSpeeds = new ChassisSpeeds(0, 0, 0);
-
       modules = new SwerveModule[4];
       modules[Constants.Side.LEFT_FRONT] = new SwerveModule(Constants.Side.LEFT_FRONT);
       modules[Constants.Side.LEFT_BACK] = new SwerveModule(Constants.Side.LEFT_BACK);
@@ -63,9 +58,6 @@ public class Chassis extends SubsystemBase {
           } catch (Exception e) {
           }
       }).start();
-
-
-
 
   }
   public void zeroHeading(){
@@ -92,6 +84,7 @@ public class Chassis extends SubsystemBase {
 
   @Override
   public void periodic() {
+      outputToShuffleboard();
     // This method will be called once per scheduler run
     for (int i = 0; i < modules.length; i++) {
         modules[i].outputToShuffleboard();
@@ -120,6 +113,7 @@ public class Chassis extends SubsystemBase {
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
+      normalizeWheelSpeeds(desiredStates);
       for (int i = 0 ; i< desiredStates.length ; i++) {
           modules[i].setDesiredState(desiredStates[i]);
       }
