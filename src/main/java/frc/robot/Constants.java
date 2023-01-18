@@ -27,15 +27,47 @@ public final class Constants {
     public static int SpinnyGearRatio = 10;
     public static int AngleyGearRatio = 10;
 
-    public static int TicksPerRevolutionAngle = 4096 * AngleyGearRatio;
+    public static int CANCoderTopRight = 10;
+    public static int CANCoderBottomRight = 11;
+    public static int CANCoderTopLeft = 12;
+    public static int CANCoderBottomLeft = 13;
+    // Order should match side
+    public static int[] CANCoders = new int[] {CANCoderTopRight,CANCoderBottomRight, CANCoderTopLeft, CANCoderBottomLeft};
+
+    /**
+     * Gear ratio and ticks per rev
+     */
+    public static double SpinnyGearRatio = 10;
+    public static double AngleyGearRatio = 10;
+
+    public static int CanCoderTicksPerRevolution = 10;
+
+    public static double TicksPerRevolutionAngle = 4096 * AngleyGearRatio; // divide ticks by this number
     public static double kMaxSpinnyVoltage = 5;
     public static double kMaxForwardyVoltage = 10;
 
+    /**
+     * Length and width as measured as distances between center of wheels
+     */
     // the left-to-right distance between the drivetrain wheels, should be measured from center to center
 	public static final double trackWidth_m = 0.61;
 	// the front-to-back distance between the drivetrain wheels, should be measured from center to center
 	public static final double wheelBase_m = 0.61;
 
+    /**
+     * For swerve drive
+     * translations for the distance to each wheel from the center of the bot.
+     * Check:
+     *  right half the bot up half the bot      (0.5, 0.5)
+     *  right half the bot down half the bot    (0.5, -0.5)
+     *  left half the bot up half the bot       (-0.5, 0.5)
+     *  left half the bot down half the bot     (-0.5, -0.5)
+     * These look like coordinates to each wheel with the order being:
+     *  top right,
+     *  bottom right,
+     *  top left,
+     *  bottom left,
+     */
 	public static final Translation2d[] moduleTranslations = {
 		new Translation2d(wheelBase_m / 2.0, trackWidth_m / 2.0),
 		new Translation2d(wheelBase_m / 2.0, -trackWidth_m / 2.0),
@@ -69,5 +101,10 @@ public final class Constants {
     public static double kMaxAccelerationAngularDrive = 3;
 
 
-
+    public static class Side {
+         public static final int LEFT_FRONT = 0;
+         public static final int LEFT_BACK = 1;
+         public static final int RIGHT_FRONT = 2;
+         public static final int RIGHT_BACK = 3;
+    }
 }

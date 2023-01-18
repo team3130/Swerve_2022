@@ -58,6 +58,10 @@ public class SwerveModule {
     }
     public double getAbsolutEncoderTicks() {
         return driveEncoder.getAbsolutePosition(); //TODO convert to rads
+
+    // It scares me that this is unused
+    public double getAbsolutEncoderRad() {
+        return (driveEncoder.getAbsolutePosition() % Constants.CanCoderTicksPerRevolution) / Constants.CanCoderTicksPerRevolution * Math.PI * 2; //TODO check if this is rads
     }
 
     public void updatePValue(double p) {

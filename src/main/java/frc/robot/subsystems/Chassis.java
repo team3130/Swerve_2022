@@ -4,10 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,11 +15,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.swerve.Side;
 import frc.robot.swerve.SwerveModule;
 import sensors.Navx;
-
-import java.util.Arrays;
 
 
 public class Chassis extends SubsystemBase {
@@ -58,10 +51,10 @@ public class Chassis extends SubsystemBase {
       chassisSpeeds = new ChassisSpeeds(0, 0, 0);
 
       modules = new SwerveModule[4];
-      modules[Side.LEFT_FRONT] = new SwerveModule(Side.LEFT_FRONT);
-      modules[Side.LEFT_BACK] = new SwerveModule(Side.LEFT_BACK);
-      modules[Side.RIGHT_FRONT] = new SwerveModule(Side.RIGHT_FRONT);
-      modules[Side.RIGHT_BACK] = new SwerveModule(Side.RIGHT_BACK);
+      modules[Constants.Side.LEFT_FRONT] = new SwerveModule(Constants.Side.LEFT_FRONT);
+      modules[Constants.Side.LEFT_BACK] = new SwerveModule(Constants.Side.LEFT_BACK);
+      modules[Constants.Side.RIGHT_FRONT] = new SwerveModule(Constants.Side.RIGHT_FRONT);
+      modules[Constants.Side.RIGHT_BACK] = new SwerveModule(Constants.Side.RIGHT_BACK);
 
       new Thread(()->{
           try {
@@ -89,10 +82,10 @@ public class Chassis extends SubsystemBase {
   public void outputToShuffleboard() {
       if (lastKpRead != Kp.getDouble(lastKpRead) ){
           lastKpRead = Kp.getDouble(lastKpRead);
-          modules[Side.LEFT_FRONT].updatePValue(lastKpRead);
-          modules[Side.LEFT_BACK].updatePValue(lastKpRead);
-          modules[Side.RIGHT_FRONT].updatePValue(lastKpRead);
-          modules[Side.RIGHT_BACK].updatePValue(lastKpRead);
+          modules[Constants.Side.LEFT_FRONT].updatePValue(lastKpRead);
+          modules[Constants.Side.LEFT_BACK].updatePValue(lastKpRead);
+          modules[Constants.Side.RIGHT_FRONT].updatePValue(lastKpRead);
+          modules[Constants.Side.RIGHT_BACK].updatePValue(lastKpRead);
       }
   }
 
@@ -106,10 +99,10 @@ public class Chassis extends SubsystemBase {
   }
 
   public void stopModules(){
-      modules[Side.LEFT_FRONT].stop();
-      modules[Side.LEFT_BACK].stop();
-      modules[Side.RIGHT_FRONT].stop();
-      modules[Side.RIGHT_BACK].stop();
+      modules[Constants.Side.LEFT_FRONT].stop();
+      modules[Constants.Side.LEFT_BACK].stop();
+      modules[Constants.Side.RIGHT_FRONT].stop();
+      modules[Constants.Side.RIGHT_BACK].stop();
   }
 
   public void normalizeWheelSpeeds(SwerveModuleState[] desiredStates) {
