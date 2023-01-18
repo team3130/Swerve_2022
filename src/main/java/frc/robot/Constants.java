@@ -46,8 +46,8 @@ public final class Constants {
     /**
      * Gear ratio and ticks per rev
      */
-    public final static double kDriveGearRatio = 10;
-    public final static double kSteerGearRatio = 10;
+    public final static double kDriveGearRatio = 6.75;
+    public final static double kSteerGearRatio = 21.4286;
     public static final double kEncoderGearRatio = 10;
     public static final double kEncoderResolution = 2048;
 
