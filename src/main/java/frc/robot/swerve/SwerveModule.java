@@ -39,7 +39,7 @@ public class SwerveModule {
         nRelEncoderReadingTicks = tab.add("ticks rel encoder " + Constants.CANCoders[side], 0).getEntry();
         nRelEncoderReadingRads = tab.add("rads rel encoder " + Constants.CANCoders[side], 0).getEntry();
 
-        turningPidController = new PIDController(Constants.SwerveKp, Constants.SwerveKi, Constants.SwerveKd, Constants.SwerveKf);
+        turningPidController = new PIDController(Constants.SwerveKp, Constants.SwerveKi, Constants.SwerveKd);
 
         m_steerMotor.configFactoryDefault();
         m_steerMotor.setNeutralMode(NeutralMode.Brake);
@@ -82,7 +82,7 @@ public class SwerveModule {
 
     // It scares me that this is unused
     public double getAbsolutEncoderRad() {
-        return m_absoluteEncoder.getAbsolutePosition() * Constants.CanCoderTicksToRads;
+        return m_absoluteEncoder.getAbsolutePosition();
     }
 
     public void updatePValue(double p) {
@@ -90,11 +90,11 @@ public class SwerveModule {
     }
 
     public void outputToShuffleboard() {
-        nAbsEncoderReadingTicks.setDouble(getAbsolutEncoderTicks());
+        // nAbsEncoderReadingTicks.setDouble(getAbsolutEncoderTicks());
         nAbsEncoderReadingRads.setDouble(getAbsolutEncoderRad());
 
         nRelEncoderReadingTicks.setDouble(m_steerMotor.getSelectedSensorPosition());
-        nRelEncoderReadingRads.setDouble(getTurningPosition());
+        // nRelEncoderReadingRads.setDouble(getTurningPosition());
     }
     public void resetEncoders(){
         m_steerMotor.setSelectedSensorPosition(getAbsolutEncoderTicks());
@@ -106,8 +106,8 @@ public class SwerveModule {
     }
 
     public void stop(){
-        m_steerMotor.set(ControlMode.PercentOutput,0);
-        m_driveMotor.set(ControlMode.PercentOutput,0);
+        m_steerMotor.set(ControlMode.PercentOutput, 0);
+        m_driveMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public void setDesiredState(SwerveModuleState state){

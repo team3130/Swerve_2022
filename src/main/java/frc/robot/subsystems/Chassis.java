@@ -37,7 +37,6 @@ public class Chassis extends SubsystemBase {
   }
 
   public Chassis(Pose2d startingPos, Rotation2d startingRotation) {
-
       m_kinematics = new SwerveDriveKinematics(Constants.moduleTranslations);
       modulePositions = new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(),
               new SwerveModulePosition(), new SwerveModulePosition()};
@@ -60,6 +59,7 @@ public class Chassis extends SubsystemBase {
       }).start();
 
   }
+  
   public void zeroHeading(){
       Navx.resetNavX();
   }
@@ -84,7 +84,7 @@ public class Chassis extends SubsystemBase {
 
   @Override
   public void periodic() {
-      outputToShuffleboard();
+      // outputToShuffleboard();
     // This method will be called once per scheduler run
     for (int i = 0; i < modules.length; i++) {
         modules[i].outputToShuffleboard();
@@ -100,10 +100,10 @@ public class Chassis extends SubsystemBase {
 
   public void normalizeWheelSpeeds(SwerveModuleState[] desiredStates) {
       double max = desiredStates[0].speedMetersPerSecond;
-      for (int i = 1 ; i< desiredStates.length ; i++ ) {
+      for (int i = 1 ; i < desiredStates.length ; i++ ) {
          max = Math.max(desiredStates[i].speedMetersPerSecond, max);
       }
-      for (int i =0 ; i<desiredStates.length ; i++) {
+      for (int i = 0 ; i < desiredStates.length ; i++) {
           desiredStates[i].speedMetersPerSecond /= max;
       }
   }
@@ -114,7 +114,7 @@ public class Chassis extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
       normalizeWheelSpeeds(desiredStates);
-      for (int i = 0 ; i< desiredStates.length ; i++) {
+      for (int i = 0; i < desiredStates.length; i++) {
           modules[i].setDesiredState(desiredStates[i]);
       }
   }
