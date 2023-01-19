@@ -15,8 +15,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.sensors.Navx;
 import frc.robot.swerve.SwerveModule;
-import sensors.Navx;
 
 
 public class Chassis extends SubsystemBase {
@@ -50,14 +50,7 @@ public class Chassis extends SubsystemBase {
       modules[Constants.Side.RIGHT_FRONT] = new SwerveModule(Constants.Side.RIGHT_FRONT);
       modules[Constants.Side.RIGHT_BACK] = new SwerveModule(Constants.Side.RIGHT_BACK);
 
-      new Thread(()->{
-          try {
-              Thread.sleep(1000);
-              zeroHeading();
-          } catch (Exception e) {
-          }
-      }).start();
-
+      zeroHeading();
   }
   
   public void zeroHeading(){
@@ -86,9 +79,10 @@ public class Chassis extends SubsystemBase {
   public void periodic() {
       // outputToShuffleboard();
     // This method will be called once per scheduler run
-    for (int i = 0; i < modules.length; i++) {
-        modules[i].outputToShuffleboard();
-    }
+      modules[Constants.Side.LEFT_FRONT].outputToShuffleboard();
+      modules[Constants.Side.LEFT_BACK].outputToShuffleboard();
+      modules[Constants.Side.RIGHT_FRONT].outputToShuffleboard();
+      modules[Constants.Side.RIGHT_BACK].outputToShuffleboard();
   }
 
   public void stopModules(){
@@ -99,13 +93,19 @@ public class Chassis extends SubsystemBase {
   }
 
   public void normalizeWheelSpeeds(SwerveModuleState[] desiredStates) {
-      double max = desiredStates[0].speedMetersPerSecond;
-      for (int i = 1 ; i < desiredStates.length ; i++ ) {
-         max = Math.max(desiredStates[i].speedMetersPerSecond, max);
-      }
-      for (int i = 0 ; i < desiredStates.length ; i++) {
-          desiredStates[i].speedMetersPerSecond /= max;
-      }
+      double max = Math.max(
+              Math.max(
+              desiredStates[Constants.Side.LEFT_FRONT].speedMetersPerSecond,
+              desiredStates[Constants.Side.LEFT_BACK].speedMetersPerSecond),
+              Math.max(
+              desiredStates[Constants.Side.RIGHT_FRONT].speedMetersPerSecond,
+              desiredStates[Constants.Side.RIGHT_BACK].speedMetersPerSecond)
+      );
+
+      desiredStates[Constants.Side.LEFT_FRONT].speedMetersPerSecond /= max;
+      desiredStates[Constants.Side.LEFT_BACK].speedMetersPerSecond /= max;
+      desiredStates[Constants.Side.RIGHT_FRONT].speedMetersPerSecond /= max;
+      desiredStates[Constants.Side.RIGHT_BACK].speedMetersPerSecond /= max;
   }
 
   public SwerveDriveKinematics getKinematics() {
@@ -114,9 +114,10 @@ public class Chassis extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
       normalizeWheelSpeeds(desiredStates);
-      for (int i = 0; i < desiredStates.length; i++) {
-          modules[i].setDesiredState(desiredStates[i]);
-      }
+      modules[Constants.Side.LEFT_FRONT].setDesiredState(desiredStates[Constants.Side.LEFT_FRONT]);
+      modules[Constants.Side.LEFT_BACK].setDesiredState(desiredStates[Constants.Side.LEFT_BACK]);
+      modules[Constants.Side.RIGHT_FRONT].setDesiredState(desiredStates[Constants.Side.RIGHT_FRONT]);
+      modules[Constants.Side.RIGHT_BACK].setDesiredState(desiredStates[Constants.Side.RIGHT_BACK]);
   }
   @Override
   public void simulationPeriodic() {

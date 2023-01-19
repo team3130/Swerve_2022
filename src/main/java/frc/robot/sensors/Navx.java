@@ -1,4 +1,4 @@
-package sensors;
+package frc.robot.sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
