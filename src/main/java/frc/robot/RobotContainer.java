@@ -17,7 +17,7 @@ import frc.robot.subsystems.Chassis;
  */
 
 public class RobotContainer {
-  public static XboxController m_driverGamepad;
+  private static XboxController m_driverGamepad;
   private final Chassis m_chassis = new Chassis();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -29,6 +29,10 @@ public class RobotContainer {
 
     m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
     // m_chassis.setDefaultCommand(new PolarSmartDrive(m_chassis));
+  }
+
+  public static XboxController getDriverGamepad() {
+    return m_driverGamepad;
   }
 
   /**

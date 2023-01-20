@@ -96,28 +96,12 @@ public class Chassis extends SubsystemBase {
       modules[Constants.Side.RIGHT_BACK].stop();
   }
 
-  public void normalizeWheelSpeeds(SwerveModuleState[] desiredStates) {
-      double max = Math.max(
-              Math.max(
-              desiredStates[Constants.Side.LEFT_FRONT].speedMetersPerSecond,
-              desiredStates[Constants.Side.LEFT_BACK].speedMetersPerSecond),
-              Math.max(
-              desiredStates[Constants.Side.RIGHT_FRONT].speedMetersPerSecond,
-              desiredStates[Constants.Side.RIGHT_BACK].speedMetersPerSecond)
-      );
-
-      desiredStates[Constants.Side.LEFT_FRONT].speedMetersPerSecond /= max;
-      desiredStates[Constants.Side.LEFT_BACK].speedMetersPerSecond /= max;
-      desiredStates[Constants.Side.RIGHT_FRONT].speedMetersPerSecond /= max;
-      desiredStates[Constants.Side.RIGHT_BACK].speedMetersPerSecond /= max;
-  }
-
   public SwerveDriveKinematics getKinematics() {
       return m_kinematics;
   }
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-      normalizeWheelSpeeds(desiredStates);
+      SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
       modules[Constants.Side.LEFT_FRONT].setDesiredState(desiredStates[Constants.Side.LEFT_FRONT]);
       modules[Constants.Side.LEFT_BACK].setDesiredState(desiredStates[Constants.Side.LEFT_BACK]);
       modules[Constants.Side.RIGHT_FRONT].setDesiredState(desiredStates[Constants.Side.RIGHT_FRONT]);

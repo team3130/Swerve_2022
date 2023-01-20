@@ -115,10 +115,11 @@ public class SwerveModule {
             stop();
             return;
         }
+        // max turn is 90 degrees optimization
         state = SwerveModuleState.optimize(state, getState().angle);
         // m_driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
         m_driveMotor.set(0);
-        m_steerMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
+        m_steerMotor.set(turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
     }
 
 

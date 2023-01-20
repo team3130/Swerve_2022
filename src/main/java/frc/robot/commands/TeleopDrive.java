@@ -8,6 +8,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -18,6 +19,8 @@ public class TeleopDrive extends CommandBase {
   private final Chassis m_chassis;
 
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
+
+  private XboxController m_xboxController;
 
   /**
    * Creates a new ExampleCommand.
@@ -31,6 +34,7 @@ public class TeleopDrive extends CommandBase {
     xLimiter = new SlewRateLimiter(Constants.kMaxAccelerationDrive);
     yLimiter = new SlewRateLimiter(Constants.kMaxAccelerationDrive);
     turningLimiter = new SlewRateLimiter(Constants.kMaxAccelerationAngularDrive);
+    m_xboxController = RobotContainer.getDriverGamepad();
   }
 
   // Called when the command is initially scheduled.
@@ -42,9 +46,9 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double y = -RobotContainer.m_driverGamepad.getRawAxis(1); // left stick y-axis (y-axis is inverted)
-    double x = RobotContainer.m_driverGamepad.getRawAxis(2); // left stick x-axis
-    double theta = RobotContainer.m_driverGamepad.getRawAxis(4); // right stick x-axis
+    double y = -m_xboxController.getRawAxis(1); // left stick y-axis (y-axis is inverted)
+    double x = m_xboxController.getRawAxis(2); // left stick x-axis
+    double theta = m_xboxController.getRawAxis(4); // right stick x-axis
 
     // apply dead-band
     x = Math.abs(x) > Constants.kDeadband ? x : 0.0;
