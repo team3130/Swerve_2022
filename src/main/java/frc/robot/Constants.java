@@ -46,18 +46,16 @@ public final class Constants {
     /**
      * Gear ratio and ticks per rev
      */
-    public final static double kDriveGearRatio = 6.75;
-    public final static double kSteerGearRatio = 21.4286;
-    public static final double kEncoderGearRatio = 10;
+    public final static double kDriveGearRatio = 6.75; // checked 1/19
+    public final static double kSteerGearRatio = 0.74247; // checked 1/19
     public static final double kEncoderResolution = 2048;
 
     public final static int CanCoderTicksPerRevolution = 10;
     public static final double kWheelDiameter = Units.inchesToMeters(3.86);
-    public static final double SteerTicksToRads = 1/(kEncoderResolution) * kSteerGearRatio; // multiply by position
+    public static final double SteerTicksToRads = 1/(kEncoderResolution * kSteerGearRatio); // multiply by position
     public static final double SteerTicksToRadsPerSecond = SteerTicksToRads * 10; // multiply by velocity
-    public final static double DriveTicksToMeters = kDriveGearRatio * Math.PI * kWheelDiameter * (1/kEncoderResolution); // multiply by
+    public final static double DriveTicksToMeters = kWheelDiameter * Math.PI * 1/(kEncoderResolution * kDriveGearRatio); // multiply by
     public static final double DriveTicksToMetersPerSecond = DriveTicksToMeters * 10; // multiply by velocity
-    public static final double CanCoderTicksToRads = kEncoderGearRatio;
     public final static double kMaxSteerVoltage = 5d;
     public final static double kMaxDriveVoltage = 9d;
 
