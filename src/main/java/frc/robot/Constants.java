@@ -27,10 +27,10 @@ public final class Constants {
     public final static int CAN_LeftBackDrive = 12;
     public final static int CAN_RightBackSteer = 13;
     public final static int CAN_RightBackDrive = 29;
-    public final static int CANCoderTopRight = 9;
-    public final static int CANCoderBottomRight = 3;
-    public final static int CANCoderTopLeft = 36;
-    public final static int CANCoderBottomLeft = 11;
+    public final static int CANCoderTopRight = 36;
+    public final static int CANCoderBottomRight = 11;
+    public final static int CANCoderTopLeft = 9;
+    public final static int CANCoderBottomLeft = 3;
     // Order should match side
     public static final int[] turningId = new int[] {CAN_LeftFrontSteer, CAN_LeftBackSteer, CAN_RightFrontSteer, CAN_RightBackSteer};
     public static final int[] spinningId = new int[] {CAN_LeftFrontDrive, CAN_LeftBackDrive, CAN_RightFrontDrive, CAN_RightBackDrive};
@@ -38,11 +38,11 @@ public final class Constants {
     /**
      * Encoder offsets
      */
-    public static final int kTopLeftOffset = 0;
-    public static final int kBottomLeftOffset = 0;
-    public static final int kTopRightOffset = 0;
-    public static final int kBottomRightOffset = 0;
-    public static final int[] kCanCoderOffsets = new int[] {kTopLeftOffset, kBottomLeftOffset, kTopRightOffset, kBottomRightOffset};
+    public static final double kTopLeftOffset = Math.toRadians(92);
+    public static final double kBottomLeftOffset = Math.toRadians(95);
+    public static final double kTopRightOffset = Math.toRadians(78);
+    public static final double kBottomRightOffset = Math.toRadians(69);
+    public static final double[] kCanCoderOffsets = new double[] {kTopLeftOffset, kBottomLeftOffset, kTopRightOffset, kBottomRightOffset};
     /**
      * Gear ratio and ticks per rev
      */
@@ -93,7 +93,7 @@ public final class Constants {
     public static final boolean kNavxReversed = true;
 
 
-    public static double SwerveKp = 3;
+    public static double SwerveKp = 0.5;
     public static double SwerveKi = 0;
     public static double SwerveKd = 0;
     public static double SwerveKf = 0;
@@ -101,7 +101,7 @@ public final class Constants {
 
     public static double openLoopRampRate = 0.7;
 
-    public static double kPhysicalMaxSpeedMetersPerSecond = 3;
+    public static double kPhysicalMaxSpeedMetersPerSecond = 1;
 
     public static double kDeadband = 0.075;
 

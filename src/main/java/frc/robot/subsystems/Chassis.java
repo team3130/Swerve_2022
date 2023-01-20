@@ -11,7 +11,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -29,7 +32,8 @@ public class Chassis extends SubsystemBase {
   private SwerveModule[] modules;
   private final Navx Gyro = Navx.GetInstance();
 
-  private NetworkTableEntry Kp = SmartDashboard.getEntry("swerve p");
+  private static ShuffleboardTab tab = Shuffleboard.getTab("Chassis");
+  private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
   private double lastKpRead = Constants.SwerveKp;
 
   public Chassis(){
@@ -77,7 +81,7 @@ public class Chassis extends SubsystemBase {
 
   @Override
   public void periodic() {
-      // outputToShuffleboard();
+      outputToShuffleboard();
     // This method will be called once per scheduler run
       modules[Constants.Side.LEFT_FRONT].outputToShuffleboard();
       modules[Constants.Side.LEFT_BACK].outputToShuffleboard();

@@ -1,7 +1,6 @@
 package frc.robot.swerve;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -33,23 +32,23 @@ public class SwerveModule {
         m_absoluteEncoder = new CANCoder(Constants.CANCoders[side]);
 
         // network stuffs
-        nAbsEncoderReadingTicks = tab.add("ticks abs encoder " + Constants.CANCoders[side], 0).getEntry();
-        nAbsEncoderReadingRads = tab.add("rads abs encoder " + Constants.CANCoders[side], 0).getEntry();
+        nAbsEncoderReadingTicks = tab.add("ticks abs encoder " + side, 0).getEntry();
+        nAbsEncoderReadingRads = tab.add("rads abs encoder " + side, 0).getEntry();
 
-        nRelEncoderReadingTicks = tab.add("ticks rel encoder " + Constants.CANCoders[side], 0).getEntry();
-        nRelEncoderReadingRads = tab.add("rads rel encoder " + Constants.CANCoders[side], 0).getEntry();
+        nRelEncoderReadingTicks = tab.add("ticks rel encoder " + side, 0).getEntry();
+        nRelEncoderReadingRads = tab.add("rads rel encoder " + side, 0).getEntry();
 
         turningPidController = new PIDController(Constants.SwerveKp, Constants.SwerveKi, Constants.SwerveKd);
 
         m_steerMotor.configFactoryDefault();
-        m_steerMotor.setNeutralMode(NeutralMode.Brake);
+        m_steerMotor.setNeutralMode(NeutralMode.Coast);
         m_steerMotor.configVoltageCompSaturation(Constants.kMaxSteerVoltage);
         m_steerMotor.enableVoltageCompensation(true);
         m_steerMotor.configOpenloopRamp(Constants.openLoopRampRate);
         m_steerMotor.setInverted(false);
 
         m_driveMotor.configFactoryDefault();
-        m_driveMotor.setNeutralMode(NeutralMode.Brake);
+        m_driveMotor.setNeutralMode(NeutralMode.Coast);
         m_driveMotor.configVoltageCompSaturation(Constants.kMaxDriveVoltage);
         m_driveMotor.enableVoltageCompensation(true);
         m_driveMotor.configOpenloopRamp(Constants.openLoopRampRate);
@@ -57,7 +56,7 @@ public class SwerveModule {
 
         turningPidController.enableContinuousInput(-Math.PI, Math.PI);
 
-        absoluteEncoderOffset = Constants.kCanCoderOffsets[side];
+        absoluteEncoderOffset = Constants.kCanCoderOffsets[side] /Constants.SteerTicksToRads;
 
         resetEncoders();
     }
@@ -67,21 +66,22 @@ public class SwerveModule {
     }
 
     public double getTurningPosition(){
-        return m_steerMotor.getSelectedSensorPosition() * Constants.SteerTicksToRads;
+        return getAbsoluteEncoderRad(); //* Constants.SteerTicksToRads;
     }
     public double getDriveVelocity() {
         return m_driveMotor.getSelectedSensorVelocity() * Constants.DriveTicksToMetersPerSecond;
     }
 
     public double getTurningVelocity() {
-        return m_steerMotor.getSelectedSensorVelocity() * Constants.SteerTicksToRadsPerSecond;
-    }
-    public double getAbsolutEncoderTicks() {
-        return m_absoluteEncoder.getAbsolutePosition() - absoluteEncoderOffset;
+        return Math.toRadians(m_absoluteEncoder.getVelocity());
     }
 
     // It scares me that this is unused
-    public double getAbsolutEncoderRad() {
+    public double getAbsoluteEncoderRad() {
+        return Math.toRadians(m_absoluteEncoder.getAbsolutePosition());
+    }
+
+    public double getAbsoluteEncoderDegrees() {
         return m_absoluteEncoder.getAbsolutePosition();
     }
 
@@ -91,13 +91,13 @@ public class SwerveModule {
 
     public void outputToShuffleboard() {
         // nAbsEncoderReadingTicks.setDouble(getAbsolutEncoderTicks());
-        nAbsEncoderReadingRads.setDouble(getAbsolutEncoderRad());
+        nAbsEncoderReadingRads.setDouble(getAbsoluteEncoderRad());
 
-        nRelEncoderReadingTicks.setDouble(m_steerMotor.getSelectedSensorPosition());
+        nRelEncoderReadingTicks.setDouble(getTurningPosition());
         // nRelEncoderReadingRads.setDouble(getTurningPosition());
     }
     public void resetEncoders(){
-        m_steerMotor.setSelectedSensorPosition(getAbsolutEncoderTicks());
+        m_steerMotor.setSelectedSensorPosition(absoluteEncoderOffset);
         m_driveMotor.setSelectedSensorPosition(0);
     }
 
@@ -116,7 +116,8 @@ public class SwerveModule {
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        m_driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
+        // m_driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
+        m_driveMotor.set(0);
         m_steerMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
     }
 

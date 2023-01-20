@@ -7,7 +7,7 @@
     "mavenUrls": [
         "https://maven.ctr-electronics.com/release/"
     ],
-    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenixpro/PhoenixProAnd5-frc2023-latest.json",
+    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenixpro/PhoenixPro5-frc2023-latest.json",
     "javaDependencies": [
         {
             "groupId": "com.ctre.phoenix",
