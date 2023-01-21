@@ -31,7 +31,12 @@ public class Chassis extends SubsystemBase {
 
   private static ShuffleboardTab tab = Shuffleboard.getTab("Chassis");
   private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
+  private final GenericEntry Kd = tab.add("d", Constants.SwerveKp).getEntry();
+  private final GenericEntry nFieldRelative = tab.add("field relative", true).getEntry();
   private double lastKpRead = Constants.SwerveKp;
+  private double lastKdRead = Constants.SwerveKd;
+
+  private boolean fieldRelative = true;
 
   public Chassis(){
       this (new Pose2d(), new Rotation2d());
@@ -51,7 +56,21 @@ public class Chassis extends SubsystemBase {
       modules[Constants.Side.RIGHT_FRONT] = new SwerveModule(Constants.Side.RIGHT_FRONT);
       modules[Constants.Side.RIGHT_BACK] = new SwerveModule(Constants.Side.RIGHT_BACK);
 
-      zeroHeading();
+      new Thread(()->{
+          try {
+              Thread.sleep(1000);
+              zeroHeading();
+          } catch (Exception e) {
+          }
+      }).start();
+  }
+
+  public void flipBool() {
+      fieldRelative = !fieldRelative;
+  }
+
+  public boolean getFieldRelative() {
+      return fieldRelative;
   }
   
   public void zeroHeading(){
@@ -73,6 +92,15 @@ public class Chassis extends SubsystemBase {
           modules[Constants.Side.RIGHT_FRONT].updatePValue(lastKpRead);
           modules[Constants.Side.RIGHT_BACK].updatePValue(lastKpRead);
       }
+      if (lastKdRead != Kd.getDouble(lastKdRead) ){
+          lastKdRead = Kd.getDouble(lastKdRead);
+          modules[Constants.Side.LEFT_FRONT].updateDValue(lastKdRead);
+          modules[Constants.Side.LEFT_BACK].updateDValue(lastKdRead);
+          modules[Constants.Side.RIGHT_FRONT].updateDValue(lastKdRead);
+          modules[Constants.Side.RIGHT_BACK].updateDValue(lastKdRead);
+      }
+
+      nFieldRelative.setBoolean(fieldRelative);
   }
 
 
@@ -119,4 +147,9 @@ public class Chassis extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
+    public void resetEncoders() {
+      for (int i = 0; i < modules.length; i++) {
+          modules[i].resetEncoders();
+      }
+    }
 }

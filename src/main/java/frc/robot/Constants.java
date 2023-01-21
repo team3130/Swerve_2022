@@ -82,28 +82,28 @@ public final class Constants {
      *  bottom left,
      */
 	public static final Translation2d[] moduleTranslations = {
-		new Translation2d(-wheelBase_m / 2.0, trackWidth_m / 2.0),
-		new Translation2d(-wheelBase_m / 2.0, -trackWidth_m / 2.0),
 		new Translation2d(wheelBase_m / 2.0, trackWidth_m / 2.0),
-		new Translation2d(wheelBase_m / 2.0, -trackWidth_m / 2.0)
+		new Translation2d(-wheelBase_m / 2.0, trackWidth_m / 2.0),
+		new Translation2d(wheelBase_m / 2.0, -trackWidth_m / 2.0),
+		new Translation2d(-wheelBase_m / 2.0, -trackWidth_m / 2.0)
 	};
 
     public static final boolean kNavxReversed = true;
 
 
-    public static double SwerveKp = 1.75;
+    public static double SwerveKp = 0.25;
     public static double SwerveKi = 0;
-    public static double SwerveKd = 0;
+    public static double SwerveKd = 0.01;
     public static double SwerveKf = 0;
 
 
     public static double openLoopRampRate = 0.7;
 
-    public static double kPhysicalMaxSpeedMetersPerSecond = 0.5;
+    public static double kPhysicalMaxSpeedMetersPerSecond = 1.5;
 
     public static double kDeadband = 0.075;
 
-    public static double kMaxAccelerationDrive = 3;
+    public static double kMaxAccelerationDrive = 0.75;
     public static double kMaxAccelerationAngularDrive = 3;
 
 

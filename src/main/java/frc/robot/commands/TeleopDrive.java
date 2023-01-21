@@ -47,8 +47,8 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double y = -m_xboxController.getRawAxis(1); // left stick y-axis (y-axis is inverted)
-    double x = m_xboxController.getRawAxis(0); // left stick x-axis
+    double y = -m_xboxController.getRawAxis(0); // left stick y-axis (y-axis is inverted)
+    double x = -m_xboxController.getRawAxis(1); // left stick x-axis
     double theta = m_xboxController.getRawAxis(4); // right stick x-axis
 
     // apply dead-band
@@ -60,7 +60,14 @@ public class TeleopDrive extends CommandBase {
     y = yLimiter.calculate(y) * Constants.kPhysicalMaxSpeedMetersPerSecond;
     theta = turningLimiter.calculate(theta) * Constants.kPhysicalMaxSpeedMetersPerSecond;
 
-    SwerveModuleState[] moduleStates = m_chassis.getKinematics().toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(x,y,theta,m_chassis.getRotation2d()));
+
+  SwerveModuleState[] moduleStates;
+    if (m_chassis.getFieldRelative()) {
+      moduleStates = m_chassis.getKinematics().toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(x, y, theta, m_chassis.getRotation2d()));
+    }
+    else {
+      moduleStates = m_chassis.getKinematics().toSwerveModuleStates(new ChassisSpeeds(x,y,theta));
+    }
     m_chassis.setModuleStates(moduleStates);
   }
 
