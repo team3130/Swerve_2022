@@ -56,9 +56,9 @@ public class TeleopDrive extends CommandBase {
     y = Math.abs(y) > Constants.kDeadband ? y : 0.0;
     theta = Math.abs(theta) > Constants.kDeadband ? theta : 0.0;
 
-    x = xLimiter.calculate(x);
-    y = yLimiter.calculate(y);
-    theta = turningLimiter.calculate(theta);
+    x = xLimiter.calculate(x) * Constants.kPhysicalMaxSpeedMetersPerSecond;
+    y = yLimiter.calculate(y) * Constants.kPhysicalMaxSpeedMetersPerSecond;
+    theta = turningLimiter.calculate(theta) * Constants.kPhysicalMaxSpeedMetersPerSecond;
 
     SwerveModuleState[] moduleStates = m_chassis.getKinematics().toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(x,y,theta,m_chassis.getRotation2d()));
     m_chassis.setModuleStates(moduleStates);
