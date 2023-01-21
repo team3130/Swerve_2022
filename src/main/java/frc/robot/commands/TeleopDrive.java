@@ -8,6 +8,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -20,7 +21,7 @@ public class TeleopDrive extends CommandBase {
 
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
 
-  private XboxController m_xboxController;
+  private Joystick m_xboxController;
 
   /**
    * Creates a new ExampleCommand.
@@ -47,7 +48,7 @@ public class TeleopDrive extends CommandBase {
   @Override
   public void execute() {
     double y = -m_xboxController.getRawAxis(1); // left stick y-axis (y-axis is inverted)
-    double x = m_xboxController.getRawAxis(2); // left stick x-axis
+    double x = m_xboxController.getRawAxis(0); // left stick x-axis
     double theta = m_xboxController.getRawAxis(4); // right stick x-axis
 
     // apply dead-band
@@ -55,9 +56,9 @@ public class TeleopDrive extends CommandBase {
     y = Math.abs(y) > Constants.kDeadband ? y : 0.0;
     theta = Math.abs(theta) > Constants.kDeadband ? theta : 0.0;
 
-    x = xLimiter.calculate(x) * Constants.kPhysicalMaxSpeedMetersPerSecond;
-    y = yLimiter.calculate(y) * Constants.kPhysicalMaxSpeedMetersPerSecond;
-    theta = turningLimiter.calculate(theta) * Constants.kPhysicalMaxSpeedMetersPerSecond;
+    x = xLimiter.calculate(x);
+    y = yLimiter.calculate(y);
+    theta = turningLimiter.calculate(theta);
 
     SwerveModuleState[] moduleStates = m_chassis.getKinematics().toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(x,y,theta,m_chassis.getRotation2d()));
     m_chassis.setModuleStates(moduleStates);

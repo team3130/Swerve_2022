@@ -38,21 +38,21 @@ public final class Constants {
     /**
      * Encoder offsets
      */
-    public static final double kTopLeftOffset = Math.toRadians(92);
-    public static final double kBottomLeftOffset = Math.toRadians(95);
-    public static final double kTopRightOffset = Math.toRadians(78);
-    public static final double kBottomRightOffset = Math.toRadians(69);
+    public static final double kTopLeftOffset = Math.toRadians(264.90);
+    public static final double kBottomLeftOffset = Math.toRadians(275.27);
+    public static final double kTopRightOffset = Math.toRadians(129.3);
+    public static final double kBottomRightOffset = Math.toRadians(357.71484);
     public static final double[] kCanCoderOffsets = new double[] {kTopLeftOffset, kBottomLeftOffset, kTopRightOffset, kBottomRightOffset};
     /**
      * Gear ratio and ticks per rev
      */
     public final static double kDriveGearRatio = 6.75; // checked 1/19
-    public final static double kSteerGearRatio = 0.74247; // checked 1/19
+    public final static double kSteerGearRatio = 150d/7d; // checked 1/19
     public static final double kEncoderResolution = 2048;
 
     public final static int CanCoderTicksPerRevolution = 10;
     public static final double kWheelDiameter = Units.inchesToMeters(3.86);
-    public static final double SteerTicksToRads = 1/(kEncoderResolution * kSteerGearRatio); // multiply by position
+    public static final double SteerTicksToRads = 1/(kEncoderResolution * kSteerGearRatio) * Math.PI * 2; // multiply by position
     public static final double SteerTicksToRadsPerSecond = SteerTicksToRads * 10; // multiply by velocity
     public final static double DriveTicksToMeters = kWheelDiameter * Math.PI * 1/(kEncoderResolution * kDriveGearRatio); // multiply by
     public static final double DriveTicksToMetersPerSecond = DriveTicksToMeters * 10; // multiply by velocity
@@ -82,16 +82,16 @@ public final class Constants {
      *  bottom left,
      */
 	public static final Translation2d[] moduleTranslations = {
-		new Translation2d(wheelBase_m / 2.0, trackWidth_m / 2.0),
-		new Translation2d(wheelBase_m / 2.0, -trackWidth_m / 2.0),
 		new Translation2d(-wheelBase_m / 2.0, trackWidth_m / 2.0),
-		new Translation2d(-wheelBase_m / 2.0, -trackWidth_m / 2.0)
+		new Translation2d(-wheelBase_m / 2.0, -trackWidth_m / 2.0),
+		new Translation2d(wheelBase_m / 2.0, trackWidth_m / 2.0),
+		new Translation2d(wheelBase_m / 2.0, -trackWidth_m / 2.0)
 	};
 
     public static final boolean kNavxReversed = true;
 
 
-    public static double SwerveKp = 0.5;
+    public static double SwerveKp = 1.75;
     public static double SwerveKi = 0;
     public static double SwerveKd = 0;
     public static double SwerveKf = 0;
@@ -99,7 +99,7 @@ public final class Constants {
 
     public static double openLoopRampRate = 0.7;
 
-    public static double kPhysicalMaxSpeedMetersPerSecond = 1;
+    public static double kPhysicalMaxSpeedMetersPerSecond = 0.5;
 
     public static double kDeadband = 0.075;
 

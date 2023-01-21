@@ -28,6 +28,8 @@ public class Chassis extends SubsystemBase {
   private SwerveDriveKinematics m_kinematics;
   private SwerveDrivePoseEstimator m_odometry;
 
+  public double setpoint = 0;
+
   private SwerveModulePosition[] modulePositions;
   private SwerveModule[] modules;
   private final Navx Gyro = Navx.GetInstance();
@@ -102,11 +104,19 @@ public class Chassis extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
       SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
+/*      for (int i = 0; i < desiredStates.length; i++) {
+          desiredStates[i].angle = new Rotation2d(setpoint);
+      }*/
       modules[Constants.Side.LEFT_FRONT].setDesiredState(desiredStates[Constants.Side.LEFT_FRONT]);
       modules[Constants.Side.LEFT_BACK].setDesiredState(desiredStates[Constants.Side.LEFT_BACK]);
       modules[Constants.Side.RIGHT_FRONT].setDesiredState(desiredStates[Constants.Side.RIGHT_FRONT]);
       modules[Constants.Side.RIGHT_BACK].setDesiredState(desiredStates[Constants.Side.RIGHT_BACK]);
   }
+
+  public void setSetpoint(double setpoint) {
+      this.setpoint = setpoint;
+  }
+
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
