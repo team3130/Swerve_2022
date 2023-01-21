@@ -8,9 +8,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.goToAngle;
+import frc.robot.commands.ZeroWheels;
 import frc.robot.subsystems.Chassis;
 
 /**
@@ -27,11 +26,10 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-        m_driverGamepad = new Joystick(0);
+    m_driverGamepad = new Joystick(0);
     configureButtonBindings();
 
      m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
-    // m_chassis.setDefaultCommand(new PolarSmartDrive(m_chassis));
   }
 
   public static Joystick getDriverGamepad() {
@@ -45,9 +43,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-  // new JoystickButton(m_driverGamepad, 1).whenActive(new goToAngle(m_chassis, Math.PI/2));
-/*  new JoystickButton(m_driverGamepad, 1).whileTrue(new goToAngle(m_chassis, Math.PI/2));
-  new JoystickButton(m_driverGamepad, 2).whileTrue(new goToAngle(m_chassis, 0));*/
+    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
   }
 
 }

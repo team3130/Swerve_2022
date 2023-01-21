@@ -7,15 +7,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sensors.Navx;
@@ -27,8 +24,6 @@ public class Chassis extends SubsystemBase {
 
   private SwerveDriveKinematics m_kinematics;
   private SwerveDrivePoseEstimator m_odometry;
-
-  public double setpoint = 0;
 
   private SwerveModulePosition[] modulePositions;
   private SwerveModule[] modules;
@@ -113,8 +108,10 @@ public class Chassis extends SubsystemBase {
       modules[Constants.Side.RIGHT_BACK].setDesiredState(desiredStates[Constants.Side.RIGHT_BACK]);
   }
 
-  public void setSetpoint(double setpoint) {
-      this.setpoint = setpoint;
+  public void turnToAngle(double setpoint) {
+      for (SwerveModule module : modules) {
+          module.turnToAngle(setpoint);
+      }
   }
 
   @Override

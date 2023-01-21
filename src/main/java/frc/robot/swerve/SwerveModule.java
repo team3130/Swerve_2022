@@ -128,4 +128,12 @@ public class SwerveModule {
         m_steerMotor.set(turningPidController.calculate(Math.IEEEremainder(getTurningPosition(), Math.PI * 2), state.angle.getRadians()));
     }
 
+    /**
+     * Turns the motors to an angle
+     * @param setpoint in radians
+     */
+    public void turnToAngle(double setpoint) {
+        m_steerMotor.set(turningPidController.calculate(Math.IEEEremainder(getTurningPosition(), Math.PI * 2), setpoint));
+    }
+
 }
