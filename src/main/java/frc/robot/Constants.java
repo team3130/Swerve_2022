@@ -50,7 +50,6 @@ public final class Constants {
     public final static double kSteerGearRatio = 150d/7d; // checked 1/19
     public static final double kEncoderResolution = 2048;
 
-    public final static int CanCoderTicksPerRevolution = 10;
     public static final double kWheelDiameter = Units.inchesToMeters(3.86);
     public static final double SteerTicksToRads = 1/(kEncoderResolution * kSteerGearRatio) * Math.PI * 2; // multiply by position
     public static final double SteerTicksToRadsPerSecond = SteerTicksToRads * 10; // multiply by velocity
@@ -70,10 +69,11 @@ public final class Constants {
     /**
      * For swerve drive
      * translations for the distance to each wheel from the center of the bot.
+     * Remember that forward (0 radians) is positive X
      * Check:
      *  right half the bot up half the bot      (0.5, 0.5)
-     *  right half the bot down half the bot    (0.5, -0.5)
-     *  left half the bot up half the bot       (-0.5, 0.5)
+     *  right half the bot down half the bot    (-0.5, 0.5)
+     *  left half the bot up half the bot       (0.5, -0.5)
      *  left half the bot down half the bot     (-0.5, -0.5)
      * These look like coordinates to each wheel with the order being:
      *  top right,
@@ -106,7 +106,6 @@ public final class Constants {
     public static double kMaxAccelerationDrive = 0.75;
     public static double kMaxAccelerationAngularDrive = 3;
 
-
     public static class Side {
          public static final int LEFT_FRONT = 0;
          public static final int LEFT_BACK = 1;
@@ -115,7 +114,7 @@ public final class Constants {
     }
 
     public static class Buttons {
-            /**
+        /**
      * Gamepad Button List
      */
     public static final int LST_BTN_A = 1;

@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,8 +23,8 @@ public class SwerveModule {
 
     private static ShuffleboardTab tab = Shuffleboard.getTab("Swerve Module");
     // private final GenericEntry nAbsEncoderReadingTicks;
-    private final GenericEntry nAbsEncoderReadingRads;
-    private final GenericEntry nPosToGetTo;
+    // private final GenericEntry nAbsEncoderReadingRads;
+    // private final GenericEntry nPosToGetTo;
     // private final GenericEntry nRelEncoderReadingTicks;
     private final GenericEntry nRelEncoderReadingRads;
 
@@ -37,8 +38,8 @@ public class SwerveModule {
 
         // network stuffs
         // nAbsEncoderReadingTicks = tab.add("ticks abs encoder " + side, 0).getEntry();
-        nAbsEncoderReadingRads = tab.add("rads abs encoder " + side, 0).getEntry();
-        nPosToGetTo = tab.add("Target " + side, 0).getEntry();
+        // nAbsEncoderReadingRads = tab.add("rads abs encoder " + side, 0).getEntry();
+        // nPosToGetTo = tab.add("Target " + side, 0).getEntry();
 
         // nRelEncoderReadingTicks = tab.add("ticks rel encoder " + side, 0).getEntry();
         nRelEncoderReadingRads = tab.add("rel encoder " + side, 0).getEntry();
@@ -65,6 +66,7 @@ public class SwerveModule {
         turningPidController.setTolerance(0.003);
 
         absoluteEncoderOffset = Constants.kCanCoderOffsets[side];
+
         this.side = side;
 
         resetEncoders();
@@ -96,13 +98,14 @@ public class SwerveModule {
     public void updatePValue(double p) {
         turningPidController.setP(p);
     }
+
     public void updateDValue(double d) {
         turningPidController.setD(d);
     }
 
     public void outputToShuffleboard() {
         // nAbsEncoderReadingTicks.setDouble(getAbsolutEncoderTicks());
-        nAbsEncoderReadingRads.setDouble(getAbsoluteEncoderRad() - Constants.kCanCoderOffsets[side]);
+        // nAbsEncoderReadingRads.setDouble(getAbsoluteEncoderRad() - Constants.kCanCoderOffsets[side]);
 
 
         // nRelEncoderReadingTicks.setDouble(getTurningPosition());
@@ -130,7 +133,7 @@ public class SwerveModule {
         // nPosToGetTo.setDouble(turningPidController.calculate(Math.IEEEremainder(getTurningPosition(), Math.PI * 2), state.angle.getRadians()));
         // max turn is 90 degrees optimization
 /*        state = SwerveModuleState.optimize(state, getState().angle);*/
-        nPosToGetTo.setDouble(state.angle.getRadians());
+        // nPosToGetTo.setDouble(state.angle.getRadians());
        m_driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
 //        m_driveMotor.set(0);
 
@@ -143,6 +146,10 @@ public class SwerveModule {
      */
     public void turnToAngle(double setpoint) {
         m_steerMotor.set(turningPidController.calculate(Math.IEEEremainder(getTurningPosition(), Math.PI * 2), setpoint));
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningVelocity()));
     }
 
 }

@@ -11,30 +11,39 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sensors.Navx;
 import frc.robot.swerve.SwerveModule;
 
+import java.util.Arrays;
+
 
 public class Chassis extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
-  private SwerveDriveKinematics m_kinematics;
-  private SwerveDrivePoseEstimator m_odometry;
+  private final SwerveDriveKinematics m_kinematics;
+  private final SwerveDrivePoseEstimator m_odometry;
 
   private SwerveModulePosition[] modulePositions;
   private SwerveModule[] modules;
   private final Navx Gyro = Navx.GetInstance();
 
   private static ShuffleboardTab tab = Shuffleboard.getTab("Chassis");
+
   private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
   private final GenericEntry Kd = tab.add("d", Constants.SwerveKp).getEntry();
-  private final GenericEntry nFieldRelative = tab.add("field relative", true).getEntry();
-  private double lastKpRead = Constants.SwerveKp;
+    private double lastKpRead = Constants.SwerveKp;
   private double lastKdRead = Constants.SwerveKd;
+
+  private final GenericEntry n_FieldRelative = tab.add("field relative", true).getEntry();
+  private final GenericEntry n_Navx;
+  private final Field2d nField;
 
   private boolean fieldRelative = true;
 
@@ -63,6 +72,12 @@ public class Chassis extends SubsystemBase {
           } catch (Exception e) {
           }
       }).start();
+
+      n_Navx = tab.add("Navx angle", Navx.getRotation().getRadians()).getEntry();
+
+      nField = new Field2d();
+      
+      SmartDashboard.putData(nField);
   }
 
   public void flipBool() {
@@ -76,6 +91,7 @@ public class Chassis extends SubsystemBase {
   public void zeroHeading(){
       Navx.resetNavX();
   }
+
   public double getHeading() {
       return Math.IEEEremainder(Navx.getAngle(), 360);
   }
@@ -100,14 +116,32 @@ public class Chassis extends SubsystemBase {
           modules[Constants.Side.RIGHT_BACK].updateDValue(lastKdRead);
       }
 
-      nFieldRelative.setBoolean(fieldRelative);
+      n_FieldRelative.setBoolean(fieldRelative);
+
+      n_Navx.setDouble(Navx.getAngle());
+
+      nField.setRobotPose(m_odometry.getEstimatedPosition());
   }
 
+  public SwerveModulePosition[] generatePoses() {
+           return new SwerveModulePosition[]{
+              modules[Constants.Side.LEFT_FRONT].getPosition(),
+              modules[Constants.Side.LEFT_BACK].getPosition(),
+              modules[Constants.Side.RIGHT_FRONT].getPosition(),
+              modules[Constants.Side.RIGHT_BACK].getPosition()
+      };
+  }
+
+  public void updateOdometryFromSwerve() {
+      m_odometry.updateWithTime(Timer.getFPGATimestamp(), Navx.getRotation(), generatePoses());
+  }
 
   @Override
   public void periodic() {
+    updateOdometryFromSwerve();
+
       outputToShuffleboard();
-    // This method will be called once per scheduler run
+
       modules[Constants.Side.LEFT_FRONT].outputToShuffleboard();
       modules[Constants.Side.LEFT_BACK].outputToShuffleboard();
       modules[Constants.Side.RIGHT_FRONT].outputToShuffleboard();
@@ -127,9 +161,7 @@ public class Chassis extends SubsystemBase {
 
   public void setModuleStates(SwerveModuleState[] desiredStates) {
       SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kPhysicalMaxSpeedMetersPerSecond);
-/*      for (int i = 0; i < desiredStates.length; i++) {
-          desiredStates[i].angle = new Rotation2d(setpoint);
-      }*/
+
       modules[Constants.Side.LEFT_FRONT].setDesiredState(desiredStates[Constants.Side.LEFT_FRONT]);
       modules[Constants.Side.LEFT_BACK].setDesiredState(desiredStates[Constants.Side.LEFT_BACK]);
       modules[Constants.Side.RIGHT_FRONT].setDesiredState(desiredStates[Constants.Side.RIGHT_FRONT]);
