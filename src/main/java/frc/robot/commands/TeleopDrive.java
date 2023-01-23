@@ -56,8 +56,8 @@ public class TeleopDrive extends CommandBase {
     y = Math.abs(y) > Constants.kDeadband ? y : 0.0;
     theta = Math.abs(theta) > Constants.kDeadband ? theta : 0.0;
 
-    x = xLimiter.calculate(x) * Constants.kPhysicalMaxSpeedMetersPerSecond;
-    y = yLimiter.calculate(y) * Constants.kPhysicalMaxSpeedMetersPerSecond;
+    x = xLimiter.calculate(x * Constants.kPhysicalMaxSpeedMetersPerSecond);
+    y = yLimiter.calculate(y * Constants.kPhysicalMaxSpeedMetersPerSecond);
     theta = turningLimiter.calculate(theta) * Constants.kPhysicalMaxSpeedMetersPerSecond;
 
 
