@@ -5,42 +5,34 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.ExampleSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class DumbDrive extends CommandBase {
+public class FlipFieldOrriented extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Chassis m_chassis;
-  private final RobotContainer m_robotcontainer;
+  private final Chassis m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param chassis The subsystem used by this command.
    */
-  public DumbDrive(Chassis chassis, RobotContainer robotContainer) {
-    m_chassis = chassis;
-    m_requirements.add(chassis);
-    m_robotcontainer = robotContainer;
+  public FlipFieldOrriented(Chassis chassis) {
+    m_subsystem = chassis;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(chassis);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_subsystem.flipBool();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    double moveSpeed = -RobotContainer.m_driverGamepad.getRawAxis(1); //joystick's y-axis is inverted on Moose at least, and we copy
-    double turnSpeed = RobotContainer.m_driverGamepad.getRawAxis(4);
-
-    m_chassis.Forwardy(moveSpeed);
-    m_chassis.Spinny(turnSpeed);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -49,6 +41,6 @@ public class DumbDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

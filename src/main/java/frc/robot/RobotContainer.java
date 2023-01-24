@@ -7,12 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.DumbDrive;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.PolarSmartDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.FlipFieldOrriented;
+import frc.robot.commands.TeleopDrive;
+import frc.robot.commands.ZeroEverything;
+import frc.robot.commands.ZeroWheels;
 import frc.robot.subsystems.Chassis;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,18 +23,20 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 
 public class RobotContainer {
-  public static XboxController m_driverGamepad;
+  private static Joystick m_driverGamepad;
   private final Chassis m_chassis = new Chassis();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
+    m_driverGamepad = new Joystick(0);
     configureButtonBindings();
-    
-    m_driverGamepad = new XboxController(0);
 
-    m_chassis.setDefaultCommand(new DumbDrive(m_chassis, this));
-    // m_chassis.setDefaultCommand(new PolarSmartDrive(m_chassis));
+     m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
+  }
+
+  public static Joystick getDriverGamepad() {
+    return m_driverGamepad;
   }
 
   /**
@@ -42,6 +45,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
+    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis));
+    SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
+  }
 
 }
