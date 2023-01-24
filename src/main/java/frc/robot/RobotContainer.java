@@ -4,10 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.FlipFieldOrriented;
 import frc.robot.commands.TeleopDrive;
@@ -49,6 +51,9 @@ public class RobotContainer {
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis));
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
+  }
+  public Command getAutonCommand() {
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.)
   }
 
 }

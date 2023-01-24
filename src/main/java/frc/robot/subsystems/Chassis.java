@@ -146,6 +146,8 @@ public class Chassis extends SubsystemBase {
       modules[Constants.Side.LEFT_BACK].outputToShuffleboard();
       modules[Constants.Side.RIGHT_FRONT].outputToShuffleboard();
       modules[Constants.Side.RIGHT_BACK].outputToShuffleboard();
+
+      SmartDashboard.putString("Robot location" , getPose2d().getTranslation().toString());
   }
 
   public void stopModules(){
@@ -172,6 +174,14 @@ public class Chassis extends SubsystemBase {
       for (SwerveModule module : modules) {
           module.turnToAngle(setpoint);
       }
+  }
+
+  public Pose2d getPose2d() {
+      return m_odometry.getEstimatedPosition();
+  }
+
+  public void resetOdometry(Pose2d pose) {
+      m_odometry.resetPosition(getRotation2d(), generatePoses(), pose);
   }
 
   @Override
