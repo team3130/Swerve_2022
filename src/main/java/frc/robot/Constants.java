@@ -91,7 +91,7 @@ public final class Constants {
     public static final boolean kNavxReversed = true;
 
 
-    public static double SwerveKp = 0.25;
+    public static double SwerveKp = 0.5;
     public static double SwerveKi = 0;
     public static double SwerveKd = 0.01;
     public static double SwerveKf = 0;

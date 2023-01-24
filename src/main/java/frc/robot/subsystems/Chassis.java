@@ -37,7 +37,7 @@ public class Chassis extends SubsystemBase {
   private static ShuffleboardTab tab = Shuffleboard.getTab("Chassis");
 
   private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
-  private final GenericEntry Kd = tab.add("d", Constants.SwerveKp).getEntry();
+  private final GenericEntry Kd = tab.add("d", Constants.SwerveKd).getEntry();
     private double lastKpRead = Constants.SwerveKp;
   private double lastKdRead = Constants.SwerveKd;
 
