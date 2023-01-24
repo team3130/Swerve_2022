@@ -52,8 +52,10 @@ public class TeleopDrive extends CommandBase {
     double theta = m_xboxController.getRawAxis(4); // right stick x-axis
 
     // apply dead-band
-    x = Math.abs(x) > Constants.kDeadband ? x : 0.0;
-    y = Math.abs(y) > Constants.kDeadband ? y : 0.0;
+    if (Math.abs(x) < Constants.kDeadband && Math.abs(y) < Constants.kDeadband) {
+      x = 0;
+      y = 0;
+    }
     theta = Math.abs(theta) > Constants.kDeadband ? theta : 0.0;
 
     x = xLimiter.calculate(x * Constants.kPhysicalMaxSpeedMetersPerSecond);
