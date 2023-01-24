@@ -103,7 +103,7 @@ public final class Constants {
 
     public static double kDeadband = 0.075;
 
-    public static double kMaxAccelerationDrive = 0.75;
+    public static double kMaxAccelerationDrive = 7;
     public static double kMaxAccelerationAngularDrive = 3;
 
     public static class Side {

@@ -47,7 +47,7 @@ public class SwerveModule {
         turningPidController = new PIDController(Constants.SwerveKp, Constants.SwerveKi, Constants.SwerveKd);
 
         m_steerMotor.configFactoryDefault();
-        m_steerMotor.setNeutralMode(NeutralMode.Coast);
+        m_steerMotor.setNeutralMode(NeutralMode.Brake);
         m_steerMotor.configVoltageCompSaturation(Constants.kMaxSteerVoltage);
         m_steerMotor.enableVoltageCompensation(true);
         //m_steerMotor.configOpenloopRamp(Constants.openLoopRampRate);
@@ -56,7 +56,7 @@ public class SwerveModule {
         m_steerMotor.setInverted(true);
 
         m_driveMotor.configFactoryDefault();
-        m_driveMotor.setNeutralMode(NeutralMode.Coast);
+        m_driveMotor.setNeutralMode(NeutralMode.Brake);
         m_driveMotor.configVoltageCompSaturation(Constants.kMaxDriveVoltage);
         m_driveMotor.enableVoltageCompensation(true);
         //m_driveMotor.configOpenloopRamp(Constants.openLoopRampRate);
@@ -117,7 +117,7 @@ public class SwerveModule {
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningVelocity()));
+        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getTurningPosition()));
     }
 
     public void stop(){
@@ -132,7 +132,7 @@ public class SwerveModule {
         }
         // nPosToGetTo.setDouble(turningPidController.calculate(Math.IEEEremainder(getTurningPosition(), Math.PI * 2), state.angle.getRadians()));
         // max turn is 90 degrees optimization
-/*        state = SwerveModuleState.optimize(state, getState().angle);*/
+        state = SwerveModuleState.optimize(state, getState().angle);
         // nPosToGetTo.setDouble(state.angle.getRadians());
        m_driveMotor.set(ControlMode.PercentOutput, state.speedMetersPerSecond / Constants.kPhysicalMaxSpeedMetersPerSecond);
 //        m_driveMotor.set(0);
