@@ -99,7 +99,7 @@ public final class Constants {
 
     public static double openLoopRampRate = 0.7;
 
-    public static double kPhysicalMaxSpeedMetersPerSecond = 1.5;
+    public static double kPhysicalMaxSpeedMetersPerSecond = 3.6;
 
     public static double kDeadband = 0.075;
 
