@@ -86,16 +86,16 @@ public class RobotContainer {
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
             trajectory,
-            Chassis::getPose2d,
+            m_chassis::getPose2d,
             m_chassis.getKinematics(),
             xController,
             yController,
             thetaController,
             m_chassis::setModuleStates,
             m_chassis);
+
      return new SequentialCommandGroup( new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
              swerveControllerCommand, new InstantCommand(() -> m_chassis.stopModules()));
-    return null;
   }
 
 }

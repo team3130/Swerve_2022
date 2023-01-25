@@ -165,3 +165,5 @@ bin/
 .vscode/
 
 !NavX.json
+
+src/main/deploy/pathplanner/
