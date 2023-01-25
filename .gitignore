@@ -164,6 +164,4 @@ bin/
 .idea/
 .vscode/
 
-!*/NavX.json
-
-*.json
+!NavX.json
