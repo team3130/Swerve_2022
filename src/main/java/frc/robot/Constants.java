@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -95,6 +96,18 @@ public final class Constants {
     public static double SwerveKi = 0;
     public static double SwerveKd = 0.01;
     public static double SwerveKf = 0;
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
+    public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
+    public static final double kMaxAngularSpeedRadiansPerSecond =  kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+    public static final double kPXController = 1.5;
+    public static final double kPYController = 1.5;
+    public static final double kPThetaController = 3;
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
+            new TrapezoidProfile.Constraints(
+                    kMaxAngularSpeedRadiansPerSecond,
+                    kMaxAngularAccelerationRadiansPerSecondSquared);
+
 
 
     public static double openLoopRampRate = 0.7;
