@@ -14,7 +14,6 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,22 +27,21 @@ public class Chassis extends SubsystemBase {
   private final SwerveDriveKinematics m_kinematics;
   private final SwerveDrivePoseEstimator m_odometry;
 
-  private SwerveModulePosition[] modulePositions;
   private SwerveModule[] modules;
   private final Navx Gyro = Navx.GetInstance();
 
   private static ShuffleboardTab tab = Shuffleboard.getTab("Chassis");
 
-  private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
-  private final GenericEntry Kd = tab.add("d", Constants.SwerveKd).getEntry();
-  private double lastKpRead = Constants.SwerveKp;
-  private double lastKdRead = Constants.SwerveKd;
+  // private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
+  // private final GenericEntry Kd = tab.add("d", Constants.SwerveKd).getEntry();
+  // private double lastKpRead = Constants.SwerveKp;
+  // private double lastKdRead = Constants.SwerveKd;
 
-  private final GenericEntry n_FieldRelative = tab.add("field relative", true).getEntry();
+  // private final GenericEntry n_FieldRelative = tab.add("field relative", true).getEntry();
   private final GenericEntry n_Navx;
   private final GenericEntry n_PosY;
   private final GenericEntry n_PosX;
-  private final Field2d nField;
+  // private final Field2d nField;
 
   private boolean fieldRelative = true;
 
@@ -53,11 +51,6 @@ public class Chassis extends SubsystemBase {
 
   public Chassis(Pose2d startingPos, Rotation2d startingRotation) {
       m_kinematics = new SwerveDriveKinematics(Constants.moduleTranslations);
-      modulePositions = new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(),
-              new SwerveModulePosition(), new SwerveModulePosition()};
-
-      // odometry wrapper class that has functionality for cameras that report position with latency
-      m_odometry = new SwerveDrivePoseEstimator(m_kinematics, startingRotation, modulePositions, startingPos);
 
       modules = new SwerveModule[4];
       modules[Constants.Side.LEFT_FRONT] = new SwerveModule(Constants.Side.LEFT_FRONT);
@@ -67,13 +60,16 @@ public class Chassis extends SubsystemBase {
 
       zeroHeading();
 
+      // odometry wrapper class that has functionality for cameras that report position with latency
+      m_odometry = new SwerveDrivePoseEstimator(m_kinematics, startingRotation, generatePoses(), startingPos);
+
       n_Navx = tab.add("Navx angle", Navx.getRotation().getRadians()).getEntry();
 
-      nField = new Field2d();
+      // nField = new Field2d();
       n_PosY = tab.add("Y position", 0).getEntry();
       n_PosX = tab.add("X position", 0).getEntry();
       
-      SmartDashboard.putData(nField);
+      // SmartDashboard.putData(nField);
   }
 
   public void flipBool() {
@@ -122,7 +118,7 @@ public class Chassis extends SubsystemBase {
   }
 
   public SwerveModulePosition[] generatePoses() {
-           return new SwerveModulePosition[]{
+           return new SwerveModulePosition[] {
               modules[Constants.Side.LEFT_FRONT].getPosition(),
               modules[Constants.Side.LEFT_BACK].getPosition(),
               modules[Constants.Side.RIGHT_FRONT].getPosition(),
@@ -136,16 +132,13 @@ public class Chassis extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateOdometryFromSwerve();
-
+      updateOdometryFromSwerve();
       outputToShuffleboard();
 
       modules[Constants.Side.LEFT_FRONT].outputToShuffleboard();
       modules[Constants.Side.LEFT_BACK].outputToShuffleboard();
       modules[Constants.Side.RIGHT_FRONT].outputToShuffleboard();
       modules[Constants.Side.RIGHT_BACK].outputToShuffleboard();
-
-      SmartDashboard.putString("Robot location" , getPose2d().getTranslation().toString());
   }
 
   public void stopModules(){
@@ -182,15 +175,15 @@ public class Chassis extends SubsystemBase {
       m_odometry.resetPosition(getRotation2d(), generatePoses(), pose);
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
+    }
 
     public void resetEncoders() {
-        for (int i = 0; i < modules.length; i++) {
+      for (int i = 0; i < modules.length; i++) {
           modules[i].resetEncoders();
-        }
-        resetOdometry(new Pose2d(0, 0, new Rotation2d()));
+      }
+      resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     }
 }

@@ -79,7 +79,6 @@ public class RobotContainer {
             new Pose2d(2, 0, new Rotation2d(Math.toRadians(90)))
     ), trajectoryConfig);
     PIDController xController = new PIDController(Constants.kPXController, 0,0);
-    xController.setTolerance();
     PIDController yController = new PIDController(Constants.kPYController, 0,0);
     ProfiledPIDController thetaController = new ProfiledPIDController(Constants.kPThetaController,
             0, 0, Constants.kThetaControllerConstraints);
