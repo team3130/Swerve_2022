@@ -23,6 +23,7 @@ public class SwerveModule {
 
     private static ShuffleboardTab tab = Shuffleboard.getTab("Swerve Module");
     // private final GenericEntry nAbsEncoderReadingTicks;
+    private final GenericEntry nDistanceTraveled;
     private final GenericEntry nAbsEncoderReadingRads;
     // private final GenericEntry nPosToGetTo;
     // private final GenericEntry nRelEncoderReadingTicks;
@@ -39,6 +40,7 @@ public class SwerveModule {
         // network stuffs
         // nAbsEncoderReadingTicks = tab.add("ticks abs encoder " + side, 0).getEntry();
         nAbsEncoderReadingRads = tab.add("rads abs encoder " + side, 0).getEntry();
+        nDistanceTraveled = tab.add("Distance " + side, 0).getEntry();
         // nPosToGetTo = tab.add("Target " + side, 0).getEntry();
 
         // nRelEncoderReadingTicks = tab.add("ticks rel encoder " + side, 0).getEntry();
@@ -106,7 +108,7 @@ public class SwerveModule {
     public void outputToShuffleboard() {
         // nAbsEncoderReadingTicks.setDouble(getAbsolutEncoderTicks());
         nAbsEncoderReadingRads.setDouble(getAbsoluteEncoderRad() - Constants.kCanCoderOffsets[side]);
-
+        nDistanceTraveled.setDouble(getDrivePosition());
 
         // nRelEncoderReadingTicks.setDouble(getTurningPosition());
         nRelEncoderReadingRads.setDouble(getTurningPosition());
@@ -149,7 +151,7 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningVelocity()));
+        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningPosition()));
     }
 
 }

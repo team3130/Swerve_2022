@@ -51,7 +51,7 @@ public final class Constants {
     public final static double kSteerGearRatio = 150d/7d; // checked 1/19
     public static final double kEncoderResolution = 2048;
 
-    public static final double kWheelDiameter = Units.inchesToMeters(3.86);
+    public static final double kWheelDiameter = Units.inchesToMeters(3d + 7d/8);
     public static final double SteerTicksToRads = 1/(kEncoderResolution * kSteerGearRatio) * Math.PI * 2; // multiply by position
     public static final double SteerTicksToRadsPerSecond = SteerTicksToRads * 10; // multiply by velocity
     public final static double DriveTicksToMeters = kWheelDiameter * Math.PI * 1/(kEncoderResolution * kDriveGearRatio); // multiply by
@@ -100,15 +100,11 @@ public final class Constants {
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecond =  kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-    public static final double kPXController = 1.5;
-    public static final double kPYController = 1.5;
-    public static final double kPThetaController = 3;
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
-            new TrapezoidProfile.Constraints(
-                    kMaxAngularSpeedRadiansPerSecond,
-                    kMaxAngularAccelerationRadiansPerSecondSquared);
-
-
+    public static final double kPXController = 1;
+    public static final double kPYController = 1;
+    public static final double kPThetaController = 2.5;
+    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+            kMaxAngularSpeedRadiansPerSecond, kMaxAngularAccelerationRadiansPerSecondSquared);
 
     public static double openLoopRampRate = 0.7;
 

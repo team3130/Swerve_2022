@@ -27,7 +27,7 @@ public class ZeroEverything extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.zeroHeading();
+    // m_subsystem.zeroHeading();
     m_subsystem.resetEncoders();
   }
 

@@ -70,18 +70,19 @@ public class RobotContainer {
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
   }
   public Command getAutonCommand() {
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationDrive)
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond / 2, Constants.kMaxAccelerationDrive / 4)
             .setKinematics(m_chassis.getKinematics());
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0, new Rotation2d(0)),
-            List.of(
-                    new Translation2d(1,0),
-                    new Translation2d(1,-1)
-            ),
-            new Pose2d(2,-1, Rotation2d.fromDegrees(180)), trajectoryConfig);
+/*    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0, new Rotation2d(0)), List.of(new Translation2d(0.5, 0)),
+            new Pose2d(1,0, new Rotation2d(Math.toRadians(180))), trajectoryConfig);*/
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(List.of(
+            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(2, 0, new Rotation2d(Math.toRadians(90)))
+    ), trajectoryConfig);
     PIDController xController = new PIDController(Constants.kPXController, 0,0);
+    xController.setTolerance();
     PIDController yController = new PIDController(Constants.kPYController, 0,0);
     ProfiledPIDController thetaController = new ProfiledPIDController(Constants.kPThetaController,
-            0, 0, Constants.kThetaControllerConstraints );
+            0, 0, Constants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
@@ -95,7 +96,7 @@ public class RobotContainer {
             m_chassis);
 
      return new SequentialCommandGroup( new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
-             swerveControllerCommand, new InstantCommand(() -> m_chassis.stopModules()));
+             swerveControllerCommand, new InstantCommand(m_chassis::stopModules));
   }
 
 }

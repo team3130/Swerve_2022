@@ -21,8 +21,6 @@ import frc.robot.Constants;
 import frc.robot.sensors.Navx;
 import frc.robot.swerve.SwerveModule;
 
-import java.util.Arrays;
-
 
 public class Chassis extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -38,11 +36,13 @@ public class Chassis extends SubsystemBase {
 
   private final GenericEntry Kp = tab.add("p", Constants.SwerveKp).getEntry();
   private final GenericEntry Kd = tab.add("d", Constants.SwerveKd).getEntry();
-    private double lastKpRead = Constants.SwerveKp;
+  private double lastKpRead = Constants.SwerveKp;
   private double lastKdRead = Constants.SwerveKd;
 
   private final GenericEntry n_FieldRelative = tab.add("field relative", true).getEntry();
   private final GenericEntry n_Navx;
+  private final GenericEntry n_PosY;
+  private final GenericEntry n_PosX;
   private final Field2d nField;
 
   private boolean fieldRelative = true;
@@ -65,17 +65,13 @@ public class Chassis extends SubsystemBase {
       modules[Constants.Side.RIGHT_FRONT] = new SwerveModule(Constants.Side.RIGHT_FRONT);
       modules[Constants.Side.RIGHT_BACK] = new SwerveModule(Constants.Side.RIGHT_BACK);
 
-      new Thread(()->{
-          try {
-              Thread.sleep(1000);
-              zeroHeading();
-          } catch (Exception e) {
-          }
-      }).start();
+      zeroHeading();
 
       n_Navx = tab.add("Navx angle", Navx.getRotation().getRadians()).getEntry();
 
       nField = new Field2d();
+      n_PosY = tab.add("Y position", 0).getEntry();
+      n_PosX = tab.add("X position", 0).getEntry();
       
       SmartDashboard.putData(nField);
   }
@@ -101,7 +97,7 @@ public class Chassis extends SubsystemBase {
   }
 
   public void outputToShuffleboard() {
-      if (lastKpRead != Kp.getDouble(lastKpRead) ){
+/*      if (lastKpRead != Kp.getDouble(lastKpRead) ){
           lastKpRead = Kp.getDouble(lastKpRead);
           modules[Constants.Side.LEFT_FRONT].updatePValue(lastKpRead);
           modules[Constants.Side.LEFT_BACK].updatePValue(lastKpRead);
@@ -114,13 +110,15 @@ public class Chassis extends SubsystemBase {
           modules[Constants.Side.LEFT_BACK].updateDValue(lastKdRead);
           modules[Constants.Side.RIGHT_FRONT].updateDValue(lastKdRead);
           modules[Constants.Side.RIGHT_BACK].updateDValue(lastKdRead);
-      }
+      }*/
 
-      n_FieldRelative.setBoolean(fieldRelative);
+      // n_FieldRelative.setBoolean(fieldRelative);
 
-      n_Navx.setDouble(Navx.getAngle());
+      n_Navx.setDouble(m_odometry.getEstimatedPosition().getRotation().getDegrees());
 
-      nField.setRobotPose(m_odometry.getEstimatedPosition());
+      // nField.setRobotPose(m_odometry.getEstimatedPosition());
+      n_PosY.setDouble(m_odometry.getEstimatedPosition().getY());
+      n_PosX.setDouble(m_odometry.getEstimatedPosition().getX());
   }
 
   public SwerveModulePosition[] generatePoses() {
@@ -190,8 +188,9 @@ public class Chassis extends SubsystemBase {
   }
 
     public void resetEncoders() {
-      for (int i = 0; i < modules.length; i++) {
+        for (int i = 0; i < modules.length; i++) {
           modules[i].resetEncoders();
-      }
+        }
+        resetOdometry(new Pose2d(0, 0, new Rotation2d()));
     }
 }
