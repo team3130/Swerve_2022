@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_chassis = m_robotContainer.getChassis();
     timer.start();
   }
 
@@ -51,8 +52,9 @@ public class Robot extends TimedRobot {
     // reset Odometry every 1.5 seconds
     // if there is a problem with Odometry it is probably because of this
     // I have no idea what I am doing
-    if (timer.advanceIfElapsed(1.5)) {
+    if (timer.hasElapsed(1.5)) {
       m_chassis.resetOdometry(trajectory.getInitialPose());
+      timer.reset();
     }
   }
 
