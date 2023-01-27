@@ -18,6 +18,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private Chassis m_chassis;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -44,6 +45,13 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    // reset Odometry every 1.5 seconds
+    // if there is a problem with Odometry it is probably because of this
+    // I have no idea what I am doing
+    if (advanceIfElapsed(1.5)) {
+      m_chassis.resetOdometry(trajectory.getInitialPose());
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

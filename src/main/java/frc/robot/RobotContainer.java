@@ -93,8 +93,8 @@ public class RobotContainer {
             thetaController,
             m_chassis::setModuleStates,
             m_chassis);
-
-     return new SequentialCommandGroup( new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
+    
+    return new SequentialCommandGroup( new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
              swerveControllerCommand, new InstantCommand(m_chassis::stopModules));
   }
 
