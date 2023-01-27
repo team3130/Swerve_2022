@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,7 +19,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private Chassis m_chassis;
+  private final Timer timer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -29,6 +30,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    timer.start();
   }
 
   /**
@@ -49,7 +51,7 @@ public class Robot extends TimedRobot {
     // reset Odometry every 1.5 seconds
     // if there is a problem with Odometry it is probably because of this
     // I have no idea what I am doing
-    if (advanceIfElapsed(1.5)) {
+    if (timer.advanceIfElapsed(1.5)) {
       m_chassis.resetOdometry(trajectory.getInitialPose());
     }
   }

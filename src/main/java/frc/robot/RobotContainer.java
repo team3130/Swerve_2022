@@ -54,6 +54,10 @@ public class RobotContainer {
      m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
   }
 
+  public Chassis getChassis() {
+    return m_chassis;
+  }
+
   public static Joystick getDriverGamepad() {
     return m_driverGamepad;
   }
