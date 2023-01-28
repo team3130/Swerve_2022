@@ -96,9 +96,9 @@ public final class Constants {
     public static double SwerveKi = 0;
     public static double SwerveKd = 0.01;
     public static double SwerveKf = 0;
-    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 2;
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecond =  kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
+    public static final double kMaxAngularSpeedRadiansPerSecond =  kPhysicalMaxAngularSpeedRadiansPerSecond;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kPXController = 3;
     public static final double kIXController = 0.5;

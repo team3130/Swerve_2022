@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,9 +21,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -31,6 +36,9 @@ import frc.robot.commands.ZeroWheels;
 import frc.robot.subsystems.Chassis;
 
 
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -44,6 +52,8 @@ import java.util.function.Consumer;
 public class RobotContainer {
   private static Joystick m_driverGamepad;
   private final Chassis m_chassis = new Chassis();
+
+  private Command auton_command;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -69,16 +79,32 @@ public class RobotContainer {
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis));
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
   }
-  public Command getAutonCommand() {
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond / 2, Constants.kMaxAccelerationDrive / 4)
+
+
+  public void generateAutonCommand() {
+    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond / 4, Constants.kMaxAccelerationDrive / 8)
             .setKinematics(m_chassis.getKinematics());
 /*   Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0, new Rotation2d(0)), List.of(new Translation2d(0.5, 0)),
             new Pose2d(1,0, new Rotation2d(Math.toRadians(45))), trajectoryConfig);*/
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(List.of(
+   /* Trajectory trajectory1 = TrajectoryGenerator.generateTrajectory(List.of(
             new Pose2d(0, 0, new Rotation2d(0)),
             new Pose2d(2, 0, new Rotation2d(Math.toRadians(0)))
     ), trajectoryConfig);
-    Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0, 0, new Rotation2d(0)), new Pose2d(3, 0, new Rotation2d(Math.toRadians(90)))), trajectoryConfig);
+    Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0, 0, new Rotation2d(0)), new Pose2d(3, 0, new Rotation2d(Math.toRadians(90)))), trajectoryConfig);*/
+/*    Trajectory trajectory3 = new Trajectory();*/
+
+    // PathPlannerTrajectory trajectoryPlanned = PathPlanner.loadPath("Forward 3 Meters and 90 degrees", new PathConstraints(2, 2));
+    PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2, 2), List.of(
+            new PathPoint(new Translation2d(0, 0), new Rotation2d(0), new Rotation2d(0)),
+            new PathPoint(new Translation2d(3, 0), new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(90)))));
+
+    /*    try {
+      trajectory3 = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("pathplanner/Forward 3 Meters and 90 degrees.path"));
+    }
+    catch (IOException e) {
+      DriverStation.reportError("Couldn't read file", false);
+    }*/
+    // System.out.println(trajectory2.toString());
     /*  Trajectory trajectory = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0,0,new Rotation2d(0)),
             new Pose2d(1.5, 0.1, new Rotation2d(Math.toRadians(30))), new Pose2d(3, 1, new Rotation2d(Math.toRadians(90))),
             new Pose2d(2.3, 1.5, new Rotation2d(Math.toRadians(120))), new Pose2d(1, 2, new Rotation2d(Math.toRadians(180))),
@@ -87,23 +113,23 @@ public class RobotContainer {
             new Pose2d(0,4.5, new Rotation2d(Math.toRadians(180)))), trajectoryConfig); */
     PIDController xController = new PIDController(Constants.kPXController, Constants.kIXController,Constants.kDXController);
     PIDController yController = new PIDController(Constants.kPYController, Constants.kIYController ,Constants.kDYController);
-    ProfiledPIDController thetaController = new ProfiledPIDController(Constants.kPThetaController,
-            Constants.kIThetaController, 0, Constants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    thetaController.setTolerance(Math.toRadians(1.5));
+    HolonomicDriveController holonomicDriveController = new HolonomicDriveController(xController, yController, new ProfiledPIDController(Constants.kPThetaController, Constants.kIThetaController, 0, Constants.kThetaControllerConstraints));
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-            trajectory2,
+            trajectoryPlanned,
             m_chassis::getPose2d,
             m_chassis.getKinematics(),
-            xController,
-            yController,
-            thetaController,
+            holonomicDriveController,
+            () -> {return trajectoryPlanned.getEndState().holonomicRotation;},
             m_chassis::setModuleStates,
             m_chassis);
 
-     return new SequentialCommandGroup(new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
+    auton_command = new SequentialCommandGroup(new InstantCommand(()->m_chassis.resetOdometry(trajectoryPlanned.getInitialPose())),
              swerveControllerCommand, new InstantCommand(m_chassis::stopModules));
+  }
+
+  public Command getAutonCommand() {
+    return auton_command;
   }
 
 }
