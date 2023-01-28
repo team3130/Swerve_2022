@@ -96,13 +96,18 @@ public final class Constants {
     public static double SwerveKi = 0;
     public static double SwerveKd = 0.01;
     public static double SwerveKf = 0;
-    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 2;
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecond =  kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
+    public static final double kMaxAngularSpeedRadiansPerSecond =  kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 2.5;
+    public static final double kPXController = 3;
+    public static final double kIXController = 0.5;
+    public static final double kDXController = 0;
+    public static final double kPYController = 3;
+    public static final double kIYController = 0.5;
+    public static final double kDYController = 0;
+    public static final double kPThetaController = 5;
+    public static final double kIThetaController = 0;
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularAccelerationRadiansPerSecondSquared);
 

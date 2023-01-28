@@ -72,26 +72,28 @@ public class RobotContainer {
   public Command getAutonCommand() {
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond / 2, Constants.kMaxAccelerationDrive / 4)
             .setKinematics(m_chassis.getKinematics());
-   Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0, new Rotation2d(0)), List.of(new Translation2d(0.5, 0)),
-            new Pose2d(1,0, new Rotation2d(Math.toRadians(45))), trajectoryConfig);
-  /*  Trajectory trajectory = TrajectoryGenerator.generateTrajectory(List.of(
+/*   Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0, new Rotation2d(0)), List.of(new Translation2d(0.5, 0)),
+            new Pose2d(1,0, new Rotation2d(Math.toRadians(45))), trajectoryConfig);*/
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(List.of(
             new Pose2d(0, 0, new Rotation2d(0)),
-            new Pose2d(2, 0, new Rotation2d(Math.toRadians(90)))
-    ), trajectoryConfig);*/
+            new Pose2d(2, 0, new Rotation2d(Math.toRadians(0)))
+    ), trajectoryConfig);
+    Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0, 0, new Rotation2d(0)), new Pose2d(3, 0, new Rotation2d(Math.toRadians(90)))), trajectoryConfig);
     /*  Trajectory trajectory = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0,0,new Rotation2d(0)),
             new Pose2d(1.5, 0.1, new Rotation2d(Math.toRadians(30))), new Pose2d(3, 1, new Rotation2d(Math.toRadians(90))),
             new Pose2d(2.3, 1.5, new Rotation2d(Math.toRadians(120))), new Pose2d(1, 2, new Rotation2d(Math.toRadians(180))),
             new Pose2d(1.25, 2.2, new Rotation2d(Math.toRadians(0))), new Pose2d(2.25, 2.5, new Rotation2d(Math.toRadians(30))),
             new Pose2d(3, 3.25, new Rotation2d(Math.toRadians(90))), new Pose2d(2.75, 4, new Rotation2d(Math.toRadians(120))),
             new Pose2d(0,4.5, new Rotation2d(Math.toRadians(180)))), trajectoryConfig); */
-    PIDController xController = new PIDController(Constants.kPXController, 0,0);
-    PIDController yController = new PIDController(Constants.kPYController, 0,0);
+    PIDController xController = new PIDController(Constants.kPXController, Constants.kIXController,Constants.kDXController);
+    PIDController yController = new PIDController(Constants.kPYController, Constants.kIYController ,Constants.kDYController);
     ProfiledPIDController thetaController = new ProfiledPIDController(Constants.kPThetaController,
-            0, 0, Constants.kThetaControllerConstraints);
+            Constants.kIThetaController, 0, Constants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.setTolerance(Math.toRadians(1.5));
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-            trajectory,
+            trajectory2,
             m_chassis::getPose2d,
             m_chassis.getKinematics(),
             xController,
@@ -100,7 +102,7 @@ public class RobotContainer {
             m_chassis::setModuleStates,
             m_chassis);
 
-     return new SequentialCommandGroup( new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
+     return new SequentialCommandGroup(new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
              swerveControllerCommand, new InstantCommand(m_chassis::stopModules));
   }
 
