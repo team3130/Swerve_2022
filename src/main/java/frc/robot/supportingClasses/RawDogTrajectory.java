@@ -1,8 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-package frc.robot;
+package frc.robot.supportingClasses;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -12,61 +8,43 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Swerve.FlipFieldOrriented;
-import frc.robot.commands.Swerve.TeleopDrive;
-import frc.robot.commands.Swerve.ZeroEverything;
-import frc.robot.commands.Swerve.ZeroWheels;
+import frc.robot.Constants;
 import frc.robot.subsystems.Chassis;
 
-
+import java.util.ArrayDeque;
 import java.util.List;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
+public class RawDogTrajectory {
+    Command auton_command;
 
-public class RobotContainer {
-  private static Joystick m_driverGamepad;
-  private final Chassis m_chassis = new Chassis();
+    final Chassis m_chassis;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the button bindings
-    m_driverGamepad = new Joystick(0);
-    configureButtonBindings();
+    ArrayDeque<Pose2d> path;
 
-     m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
-  }
+    RawDogTrajectory(Chassis chassis) {
+        m_chassis = chassis;
+    }
 
-  public static Joystick getDriverGamepad() {
-    return m_driverGamepad;
-  }
+    public void addPoints(Pose2d... poses) {
+        for (Pose2d pose : poses) {
+            addPoint(pose);
+        }
+    }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
-    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis));
-    SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
-  }
-  public Command getAutonCommand() {
-    TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond / 2, Constants.kMaxAccelerationDrive / 4)
+    public void addPoint(Pose2d pose) {
+        path.add(pose);
+    }
+
+    public Pose2d getPoint() {
+        return path.peekFirst();
+    }
+
+    public void makePath() {
+            TrajectoryConfig trajectoryConfig = new TrajectoryConfig(Constants.kPhysicalMaxSpeedMetersPerSecond / 2, Constants.kMaxAccelerationDrive / 4)
             .setKinematics(m_chassis.getKinematics());
    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0, new Rotation2d(0)), List.of(new Translation2d(0.5, 0)),
             new Pose2d(1,0, new Rotation2d(Math.toRadians(45))), trajectoryConfig);
@@ -96,8 +74,6 @@ public class RobotContainer {
             m_chassis::setModuleStates,
             m_chassis);
 
-     return new SequentialCommandGroup( new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())),
-             swerveControllerCommand, new InstantCommand(m_chassis::stopModules));
-  }
-
+     new SequentialCommandGroup(new InstantCommand(()->m_chassis.resetOdometry(trajectory.getInitialPose())), swerveControllerCommand, new InstantCommand(m_chassis::stopModules));
+    }
 }
