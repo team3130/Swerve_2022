@@ -167,3 +167,7 @@ bin/
 !NavX.json
 
 src/main/deploy/pathplanner/
+
+simgui-ds.json
+
+simgui.json
