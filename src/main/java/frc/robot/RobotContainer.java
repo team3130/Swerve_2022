@@ -13,6 +13,7 @@ import frc.robot.commands.FlipFieldOrriented;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.ZeroEverything;
 import frc.robot.commands.ZeroWheels;
+import frc.robot.sensors.Limelight;
 import frc.robot.subsystems.Chassis;
 
 /**
@@ -26,6 +27,9 @@ public class RobotContainer {
   private static Joystick m_driverGamepad;
   private final Chassis m_chassis = new Chassis();
 
+  public final Limelight m_limelight;
+
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -33,6 +37,8 @@ public class RobotContainer {
     configureButtonBindings();
 
      m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
+
+     m_limelight = new Limelight();
   }
 
   public static Joystick getDriverGamepad() {
