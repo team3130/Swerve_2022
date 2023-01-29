@@ -93,10 +93,12 @@ public class RobotContainer {
     Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0, 0, new Rotation2d(0)), new Pose2d(3, 0, new Rotation2d(Math.toRadians(90)))), trajectoryConfig);*/
 /*    Trajectory trajectory3 = new Trajectory();*/
 
-    // PathPlannerTrajectory trajectoryPlanned = PathPlanner.loadPath("Forward 3 Meters and 90 degrees", new PathConstraints(2, 2));
+    PathPlannerTrajectory trajectoryPlanned = PathPlanner.loadPath("Forward 3 Meters and 90 degrees", new PathConstraints(Constants.kPhysicalMaxSpeedMetersPerSecond, Constants.kMaxAccelerationDrive));
+/*
     PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2, 2), List.of(
             new PathPoint(new Translation2d(0, 0), new Rotation2d(0), new Rotation2d(0)),
             new PathPoint(new Translation2d(3, 0), new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(90)))));
+*/
 
     /*    try {
       trajectory3 = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("pathplanner/Forward 3 Meters and 90 degrees.path"));
