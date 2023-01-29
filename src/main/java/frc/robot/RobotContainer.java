@@ -94,9 +94,19 @@ public class RobotContainer {
 /*    Trajectory trajectory3 = new Trajectory();*/
 
     // PathPlannerTrajectory trajectoryPlanned = PathPlanner.loadPath("Forward 3 Meters and 90 degrees", new PathConstraints(2, 2));
-    PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2, 2), List.of(
+   /* PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2, 2), List.of(
             new PathPoint(new Translation2d(0, 0), new Rotation2d(0), new Rotation2d(0)),
-            new PathPoint(new Translation2d(3, 0), new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(90)))));
+            new PathPoint(new Translation2d(3, 0), new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(90))))); */
+    PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2,2), List.of(
+            new PathPoint(new Translation2d(0,0), new Rotation2d(0), new Rotation2d(0) ),
+            new PathPoint(new Translation2d(1.5, 0.1), new Rotation2d(Math.toRadians(30)), new Rotation2d(0)), new PathPoint(new Translation2d(3,1),
+                    new Rotation2d(Math.toRadians(90)), new Rotation2d(0)), new PathPoint(new Translation2d(2.3,1.5),  new Rotation2d(Math.toRadians(120)), new Rotation2d(0)),
+                    new PathPoint( new Translation2d(1,2),  new Rotation2d(Math.toRadians(180)), new Rotation2d(0)),
+                    new PathPoint(new Translation2d(1.5, 2.2), new Rotation2d(0), new Rotation2d(0)),
+                    new PathPoint(new Translation2d(2.25, 2.5), new Rotation2d(Math.toRadians(30)), new Rotation2d(0)),
+                    new PathPoint(new Translation2d(3,3.25),  new Rotation2d(Math.toRadians(90)), new Rotation2d(0)),
+                    new PathPoint(new Translation2d(2.75, 4), new Rotation2d(Math.toRadians(120)), new Rotation2d(0)),
+                    new PathPoint(new Translation2d(0,4.5),  new Rotation2d(Math.toRadians(180)), new Rotation2d(0))));
 
     /*    try {
       trajectory3 = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("pathplanner/Forward 3 Meters and 90 degrees.path"));
