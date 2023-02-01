@@ -1,25 +1,30 @@
 package frc.robot.sensors;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import javax.swing.text.Position;
 import java.util.ArrayList;
 import java.util.List;
+
+import static edu.wpi.first.math.util.Units.degreesToRadians;
 
 public class Limelight {
 
     PhotonCamera camera;
-
-    private final GenericEntry ntHasTarget;
+    public final GenericEntry ntHasTarget;
     private final GenericEntry ntYaw;
-    private final GenericEntry ntDifferentTargets;
+    public final GenericEntry ntDifferentTargets;
     private final GenericEntry ntID;
-
-
     private static ShuffleboardTab tab = Shuffleboard.getTab("PhotonCamera");
 
     public Limelight() {
@@ -36,10 +41,6 @@ public class Limelight {
         PhotonTrackedTarget target = result.getBestTarget();
         if (target != null) {
             boolean hasTargets = result.hasTargets();
-            double yaw = target.getYaw();
-            double pitch = target.getPitch();
-            double area = target.getPitch();
-            double skew = target.getSkew();
             int targetID = target.getFiducialId();
 
             ntHasTarget.setBoolean(hasTargets);
@@ -56,4 +57,16 @@ public class Limelight {
             }
         }
     }
-}
+    public int robotPose;
+    public int targetPose;
+    public int cameraToRobot;
+    public void Pose2D() {
+        
+        PhotonPipelineResult result = camera.getLatestResult();
+        PhotonTrackedTarget target = result.getBestTarget();
+
+        ArrayList<PhotonTrackedTarget> targetPose = new ArrayList<>(result.getTargets());
+            KCameraHeight = targetPose.get()
+        }
+
+    }
