@@ -4,12 +4,17 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -21,7 +26,6 @@ import frc.robot.Constants;
 import frc.robot.sensors.Navx;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.sensors.Limelight;
-import java.util.Arrays;
 
 
 public class Chassis extends SubsystemBase {
@@ -47,11 +51,13 @@ public class Chassis extends SubsystemBase {
 
   private boolean fieldRelative = true;
 
-  public Chassis(){
-      this (new Pose2d(), new Rotation2d());
+  public Limelight m_limelight;
+
+  public Chassis(Limelight limelight){
+      this (new Pose2d(), new Rotation2d(), limelight);
   }
 
-  public Chassis(Pose2d startingPos, Rotation2d startingRotation) {
+  public Chassis(Pose2d startingPos, Rotation2d startingRotation, Limelight limelight) {
       m_kinematics = new SwerveDriveKinematics(Constants.moduleTranslations);
       modulePositions = new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(),
               new SwerveModulePosition(), new SwerveModulePosition()};
@@ -78,6 +84,8 @@ public class Chassis extends SubsystemBase {
       nField = new Field2d();
       
       SmartDashboard.putData(nField);
+
+      m_limelight = limelight;
   }
 
   public void flipBool() {
@@ -133,8 +141,15 @@ public class Chassis extends SubsystemBase {
   }
 
   public void updateOdometryFromSwerve() {
-      m_odometry.updateWithTime(Timer.getFPGATimestamp(), Navx.getRotation(), generatePoses());
-      m_odometry.addVisionMeasurement(Limelight.positon());
+      double currentTime = Timer.getFPGATimestamp();
+      m_odometry.updateWithTime(currentTime, Navx.getRotation(), generatePoses());
+
+      Pose2d positionAccordingToCamera = m_limelight.getCameraPosition().toPose2d();
+
+      if (positionAccordingToCamera != null) {
+          // start with using the default matrix for confidence
+          m_odometry.addVisionMeasurement(positionAccordingToCamera, currentTime);
+      }
   }
 
   @Override

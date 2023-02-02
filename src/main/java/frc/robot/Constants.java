@@ -43,6 +43,26 @@ public final class Constants {
     public static final double kTopRightOffset = Math.toRadians(129.3);
     public static final double kBottomRightOffset = Math.toRadians(357.71484);
     public static final double[] kCanCoderOffsets = new double[] {kTopLeftOffset, kBottomLeftOffset, kTopRightOffset, kBottomRightOffset};
+
+    /**
+     * Camera constants
+     */
+    public static class Camera {
+        // TODO: Find these values
+        // The position and orientation of the camera in meters
+        public static final double xPos = 0;
+        public static final double yPos = 0;
+        public static final double zPos = 0;
+
+        public static final double pitch = 0;
+        public static final double yaw = 0;
+        public static final double roll = 0;
+
+        public static double confidenceN1 = 0;
+        public static double confidenceN2 = 0;
+        public static double confidenceN3 = 0;
+    }
+
     /**
      * Gear ratio and ticks per rev
      */

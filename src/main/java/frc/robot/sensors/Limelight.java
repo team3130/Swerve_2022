@@ -3,23 +3,19 @@ package frc.robot.sensors;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.Constants;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import frc.robot.Constants.Camera;
 
-import javax.swing.text.Position;
 import java.io.IOException;
 import java.util.ArrayList;
-import frc.robot.Constants;
-import java.util.List;
-
-import static edu.wpi.first.math.util.Units.degreesToRadians;
 
 public class Limelight {
 
@@ -66,22 +62,20 @@ public class Limelight {
             }
         }
     }
-    public Pose3d position() {
-
+    public Pose3d getCameraPosition() {
         PhotonPipelineResult result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
+        // x is forward, y is left, z is up
         Transform3d bestCameraToTarget = target.getBestCameraToTarget();
-        Transform3d origin = new Transform3d(new Translation3d(0, 0,0), new Rotation3d(0, 0, 0));
 
+        // the matrix transformation for the camera to the center of the bot
+        Transform3d cameraToCenterOfBot = new Transform3d(
+                new Translation3d(Camera.xPos, Camera.yPos, Camera.zPos),
+                new Rotation3d(Camera.roll, Camera.pitch, Camera.yaw));
 
-
-        ArrayList<PhotonTrackedTarget> targetPose = new ArrayList<>(result.getTargets());
-        Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
-                target.getBestCameraToTarget(),
+        return PhotonUtils.estimateFieldToRobotAprilTag(
+                bestCameraToTarget,
                 aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(),
-                origin);
-
-        return robotPose;
-
+                cameraToCenterOfBot);
     }
 }

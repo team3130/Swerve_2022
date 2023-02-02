@@ -25,7 +25,7 @@ import frc.robot.subsystems.Chassis;
 
 public class RobotContainer {
   private static Joystick m_driverGamepad;
-  private final Chassis m_chassis = new Chassis();
+  private final Chassis m_chassis;
 
   public final Limelight m_limelight;
 
@@ -36,9 +36,10 @@ public class RobotContainer {
     m_driverGamepad = new Joystick(0);
     configureButtonBindings();
 
-     m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
+    m_limelight = new Limelight();
 
-     m_limelight = new Limelight();
+    m_chassis = new Chassis(m_limelight);
+    m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
   }
 
   public static Joystick getDriverGamepad() {
