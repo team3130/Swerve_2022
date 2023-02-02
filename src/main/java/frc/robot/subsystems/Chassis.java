@@ -134,7 +134,7 @@ public class Chassis extends SubsystemBase {
 
   public void updateOdometryFromSwerve() {
       m_odometry.updateWithTime(Timer.getFPGATimestamp(), Navx.getRotation(), generatePoses());
-      m_odometry.addVisionMeasurement(Limelight.positon());
+      m_odometry.addVisionMeasurement(Limelight.position());
   }
 
   @Override
