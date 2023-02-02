@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sensors.Navx;
 import frc.robot.swerve.SwerveModule;
-
+import frc.robot.sensors.Limelight;
 import java.util.Arrays;
 
 
@@ -134,6 +134,7 @@ public class Chassis extends SubsystemBase {
 
   public void updateOdometryFromSwerve() {
       m_odometry.updateWithTime(Timer.getFPGATimestamp(), Navx.getRotation(), generatePoses());
+      m_odometry.addVisionMeasurement(Limelight.positon());
   }
 
   @Override

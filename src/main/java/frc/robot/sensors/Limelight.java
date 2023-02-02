@@ -66,16 +66,22 @@ public class Limelight {
             }
         }
     }
-    public double robotPose;
-    public int targetPose;
-    public void Pose3d() {
+    public Pose3d position() {
 
         PhotonPipelineResult result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
         Transform3d bestCameraToTarget = target.getBestCameraToTarget();
+        Transform3d origin = new Transform3d(new Translation3d(0, 0,0), new Rotation3d(0, 0, 0));
 
 
-        ArrayList<PhotonTrackedTarget> TagPose = new ArrayList<>(result.getTargets());
-        Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), aprilTagFieldLayout.getTagPose(target.getFiducialId()), Constants.cameraToRobot);
+
+        ArrayList<PhotonTrackedTarget> targetPose = new ArrayList<>(result.getTargets());
+        Pose3d robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
+                target.getBestCameraToTarget(),
+                aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(),
+                origin);
+
+        return robotPose;
+
     }
 }
