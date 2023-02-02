@@ -18,10 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Limelight {
-
     PhotonCamera camera;
     public final GenericEntry ntHasTarget;
-    private final GenericEntry ntYaw;
     public final GenericEntry ntDifferentTargets;
     private final GenericEntry ntID;
     private static ShuffleboardTab tab = Shuffleboard.getTab("PhotonCamera");
@@ -29,7 +27,6 @@ public class Limelight {
     public Limelight() {
         camera = new PhotonCamera("OV5647");
         ntHasTarget = tab.add("HasTarget", false).getEntry();
-        ntYaw = tab.add("Yaw", 0).getEntry();
         ntDifferentTargets = tab.add("DifferentTargets", new Long[0]).getEntry();
         ntID = tab.add("ID", 0).getEntry();
 
@@ -49,9 +46,7 @@ public class Limelight {
             int targetID = target.getFiducialId();
 
             ntHasTarget.setBoolean(hasTargets);
-            ntYaw.setDouble(target.getYaw());
             ntID.setInteger(target.getFiducialId());
-
 
             ArrayList<PhotonTrackedTarget> diffrentID = new ArrayList<>(result.getTargets());
             Long[] fiducialIDs = new Long[diffrentID.size()];
