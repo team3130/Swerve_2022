@@ -58,6 +58,8 @@ public final class Constants {
     public final static double kMaxSteerVoltage = 5d;
     public final static double kMaxDriveVoltage = 9d;
 
+    public final static double cameraToRobot = 0.305;
+
     /**
      * Length and width as measured as distances between center of wheels
      */
