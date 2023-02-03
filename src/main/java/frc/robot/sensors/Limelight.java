@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -17,6 +18,8 @@ import frc.robot.Constants.Camera;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static frc.robot.Constants.Camera.xPos;
+
 public class Limelight {
     PhotonCamera camera;
     public final GenericEntry ntHasTarget;
@@ -24,11 +27,13 @@ public class Limelight {
     private final GenericEntry ntID;
     private static ShuffleboardTab tab = Shuffleboard.getTab("PhotonCamera");
     AprilTagFieldLayout aprilTagFieldLayout;
+    private Field2d fieldPos = new Field2d();
     public Limelight() {
         camera = new PhotonCamera("OV5647");
         ntHasTarget = tab.add("HasTarget", false).getEntry();
         ntDifferentTargets = tab.add("DifferentTargets", new Long[0]).getEntry();
         ntID = tab.add("ID", 0).getEntry();
+
 
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
@@ -41,6 +46,13 @@ public class Limelight {
 
         PhotonPipelineResult result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
+        Transform3d cameraToCenterOfBot = new Transform3d(
+                new Translation3d(xPos, Camera.yPos, Camera.zPos),
+                new Rotation3d(Camera.roll, Camera.pitch, Camera.yaw));
+        Pose3d PoseOnField = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(), cameraToCenterOfBot);
+
+        fieldPos.setRobotPose(PoseOnField.toPose2d());
+
         if (target != null) {
             boolean hasTargets = result.hasTargets();
             int targetID = target.getFiducialId();
@@ -65,7 +77,7 @@ public class Limelight {
 
         // the matrix transformation for the camera to the center of the bot
         Transform3d cameraToCenterOfBot = new Transform3d(
-                new Translation3d(Camera.xPos, Camera.yPos, Camera.zPos),
+                new Translation3d(xPos, Camera.yPos, Camera.zPos),
                 new Rotation3d(Camera.roll, Camera.pitch, Camera.yaw));
 
         return PhotonUtils.estimateFieldToRobotAprilTag(
@@ -73,4 +85,8 @@ public class Limelight {
                 aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(),
                 cameraToCenterOfBot);
     }
+
+
+
 }
+

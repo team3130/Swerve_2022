@@ -190,6 +190,10 @@ public class Chassis extends SubsystemBase {
       }
   }
 
+  public void resetPositionTo(Pose2d pose){
+      m_odometry.resetPosition(Navx.getRotation(), generatePoses(), pose);
+  }
+
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation

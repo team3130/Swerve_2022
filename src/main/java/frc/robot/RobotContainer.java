@@ -34,11 +34,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     m_driverGamepad = new Joystick(0);
-    configureButtonBindings();
-
     m_limelight = new Limelight();
 
     m_chassis = new Chassis(m_limelight);
+    configureButtonBindings();
     m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
   }
 
@@ -56,6 +55,10 @@ public class RobotContainer {
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis));
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
+  }
+
+  public void resetOdometry (){
+    m_chassis.resetPositionTo(m_limelight.getCameraPosition().toPose2d());
   }
 
 }

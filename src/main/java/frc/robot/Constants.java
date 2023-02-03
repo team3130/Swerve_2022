@@ -50,9 +50,9 @@ public final class Constants {
     public static class Camera {
         // TODO: Find these values
         // The position and orientation of the camera in meters
-        public static final double xPos = 0;
-        public static final double yPos = 0;
-        public static final double zPos = 0;
+        public static final double xPos = Units.inchesToMeters(12);;
+        public static final double yPos = Units.inchesToMeters(0);;
+        public static final double zPos = Units.inchesToMeters(4.5);
 
         public static final double pitch = 0;
         public static final double yaw = 0;
@@ -77,6 +77,8 @@ public final class Constants {
     public static final double DriveTicksToMetersPerSecond = DriveTicksToMeters * 10; // multiply by velocity
     public final static double kMaxSteerVoltage = 5d;
     public final static double kMaxDriveVoltage = 9d;
+
+    public final static double kLimelightHeight = Units.inchesToMeters(60);
 
     public final static double Cameraheight_m = 0;
 
