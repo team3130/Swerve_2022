@@ -28,6 +28,7 @@ public class RobotContainer {
   private final Chassis m_chassis;
 
   public final Limelight m_limelight;
+  public int readingCounter;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -58,7 +59,12 @@ public class RobotContainer {
   }
 
   public void resetOdometry (){
-    m_chassis.resetPositionTo(m_limelight.getCameraPosition().toPose2d());
+    if(m_limelight.getCameraPosition().toPose2d()!= null){
+      readingCounter++;
+    }
+    if (readingCounter>5) {
+      m_chassis.resetPositionTo(m_limelight.getCameraPosition().toPose2d());
+    }
   }
 
 }
