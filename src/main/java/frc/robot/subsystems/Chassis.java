@@ -37,7 +37,7 @@ public class Chassis extends SubsystemBase {
   // private double lastKpRead = Constants.SwerveKp;
   // private double lastKdRead = Constants.SwerveKd;
 
-  // private final GenericEntry n_FieldRelative = tab.add("field relative", true).getEntry();
+  private final GenericEntry n_FieldRelative = tab.add("field relative", true).getEntry();
   private final GenericEntry n_Navx;
   private final GenericEntry n_PosY;
   private final GenericEntry n_PosX;
@@ -108,7 +108,7 @@ public class Chassis extends SubsystemBase {
           modules[Constants.Side.RIGHT_BACK].updateDValue(lastKdRead);
       }*/
 
-      // n_FieldRelative.setBoolean(fieldRelative);
+      n_FieldRelative.setBoolean(fieldRelative);
 
       n_Navx.setDouble(m_odometry.getEstimatedPosition().getRotation().getDegrees());
 

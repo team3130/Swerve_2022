@@ -94,7 +94,7 @@ public class RobotContainer {
     Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0, 0, new Rotation2d(0)), new Pose2d(3, 0, new Rotation2d(Math.toRadians(90)))), trajectoryConfig);*/
 /*    Trajectory trajectory3 = new Trajectory();*/
 
-    // PathPlannerTrajectory trajectoryPlanned = PathPlanner.loadPath("Forward 3 Meters and 90 degrees", new PathConstraints(2, 2));
+   PathPlannerTrajectory trajectoryPlanned = PathPlanner.loadPath("Desperate", new PathConstraints(2, 2));
    /* PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2, 2), List.of(
             new PathPoint(new Translation2d(0, 0), new Rotation2d(0), new Rotation2d(0)),
             new PathPoint(new Translation2d(3, 0), new Rotation2d(Math.toRadians(0)), new Rotation2d(Math.toRadians(90))))); */
@@ -110,7 +110,7 @@ public class RobotContainer {
                     new PathPoint(new Translation2d(0,4.5),  new Rotation2d(Math.toRadians(180)), new Rotation2d(0))));
                     */
     //start(ish) of driver vs auton
-    PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2,2), List.of(
+   /*  PathPlannerTrajectory trajectoryPlanned = PathPlanner.generatePath(new PathConstraints(2,2), List.of(
             new PathPoint(new Translation2d(0,0), new Rotation2d(0), new Rotation2d(0)),
             new PathPoint(new Translation2d(0,1.1938), new Rotation2d(Math.toRadians(90)), new Rotation2d(0)),
             new PathPoint(new Translation2d(-4.527, 1.1938), new Rotation2d(Math.toRadians(180)), new Rotation2d(0)),
@@ -123,6 +123,7 @@ public class RobotContainer {
 
 
     );
+    */
 
 
 
