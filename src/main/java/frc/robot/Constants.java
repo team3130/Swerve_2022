@@ -79,6 +79,7 @@ public final class Constants {
     public final static double kMaxDriveVoltage = 9d;
 
     public final static double kLimelightHeight = Units.inchesToMeters(60);
+    public final static int kLimelightFilterBufferSize = 5;
 
     public final static double Cameraheight_m = 0;
 
