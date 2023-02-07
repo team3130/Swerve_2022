@@ -67,17 +67,12 @@ public class RobotContainer {
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
   }
 
-  public void resetOdometry (){
+  public void resetOdometry(){
     if(m_limelight.getCameraPosition().toPose2d()!= null){
       readingCounter++;
     }
     if (readingCounter>5) {
       m_chassis.resetPositionTo(m_limelight.getCameraPosition().toPose2d());
     }
-  }
-
-  public void resetOdometry (){
-    m_chassis.resetPositionTo(new Pose2d(0,0 , new Rotation2d()));
-    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ZeroWheels(m_chassis), new ZeroEverything(m_chassis)));
   }
 }

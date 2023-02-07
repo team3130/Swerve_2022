@@ -57,8 +57,7 @@ public class Robot extends TimedRobot {
      odometryTimer.reset();
      odometryTimer.stop();
    }
-  }
-=======
+
    if (odometryTimer.hasElapsed(1.5) /*&& m_robotContainer.GetLimeLight().getCameraPosition() != null)*/ ){
 /*       readingCounter++;
 
@@ -69,7 +68,6 @@ public class Robot extends TimedRobot {
 
      }
    }
->>>>>>> Stashed changes
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override

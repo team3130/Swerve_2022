@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import static frc.robot.Constants.Camera.xPos;
 
-private MedianFilter x;
 
 public class Limelight {
     PhotonCamera camera;
