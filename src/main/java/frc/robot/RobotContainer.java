@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.FlipFieldOrriented;
 import frc.robot.commands.TeleopDrive;
@@ -42,6 +46,11 @@ public class RobotContainer {
     m_chassis.setDefaultCommand(new TeleopDrive(m_chassis));
   }
 
+  public Limelight GetLimeLight() {
+   return m_limelight;
+  }
+
+
   public static Joystick getDriverGamepad() {
     return m_driverGamepad;
   }
@@ -54,7 +63,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
-    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis));
+    new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis, m_limelight));
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
   }
 
@@ -67,4 +76,8 @@ public class RobotContainer {
     }
   }
 
+  public void resetOdometry (){
+    m_chassis.resetPositionTo(new Pose2d(0,0 , new Rotation2d()));
+    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ZeroWheels(m_chassis), new ZeroEverything(m_chassis)));
+  }
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
    */
   Timer odometryTimer = new Timer();
 
+  int readingCounter = 0;
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -56,6 +58,18 @@ public class Robot extends TimedRobot {
      odometryTimer.stop();
    }
   }
+=======
+   if (odometryTimer.hasElapsed(1.5) /*&& m_robotContainer.GetLimeLight().getCameraPosition() != null)*/ ){
+/*       readingCounter++;
+
+     if (readingCounter>5) {*/
+      m_robotContainer.resetOdometry();
+       odometryTimer.reset();
+       odometryTimer.stop();
+
+     }
+   }
+>>>>>>> Stashed changes
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
