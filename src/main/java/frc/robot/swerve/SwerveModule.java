@@ -87,6 +87,10 @@ public class SwerveModule {
         return m_steerMotor.getSelectedSensorVelocity() * Constants.SteerTicksToRadsPerSecond;
     }
 
+    public boolean PID_is_Done() {
+        return turningPidController.atSetpoint();
+    }
+
     public double getAbsoluteEncoderRad() {
         return Math.toRadians(m_absoluteEncoder.getAbsolutePosition());
     }

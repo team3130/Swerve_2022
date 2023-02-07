@@ -133,7 +133,19 @@ public class Chassis extends SubsystemBase {
   }
 
   public void updateOdometryFromSwerve() {
+<<<<<<< Updated upstream
       m_odometry.updateWithTime(Timer.getFPGATimestamp(), Navx.getRotation(), generatePoses());
+=======
+      double currentTime = Timer.getFPGATimestamp();
+      m_odometry.updateWithTime(currentTime, Navx.getRotation(), generatePoses());
+
+      Pose3d positionAccordingToCamera = m_limelight.getCameraPosition();
+
+      if (positionAccordingToCamera != null) {
+          // start with using the default matrix for confidence
+          m_odometry.addVisionMeasurement(positionAccordingToCamera.toPose2d(), currentTime);
+      }
+>>>>>>> Stashed changes
   }
 
   @Override
@@ -174,6 +186,17 @@ public class Chassis extends SubsystemBase {
       }
   }
 
+<<<<<<< Updated upstream
+=======
+  public boolean PID_is_Done() {
+      return modules[0].PID_is_Done() && modules[1].PID_is_Done() && modules[2].PID_is_Done() && modules[3].PID_is_Done();
+  }
+
+  public void resetPositionTo(Pose2d pose){
+      m_odometry.resetPosition(Navx.getRotation(), generatePoses(), pose);
+  }
+
+>>>>>>> Stashed changes
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
