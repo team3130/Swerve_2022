@@ -31,6 +31,7 @@ public class Limelight {
     public final GenericEntry ntHasTarget;
     public final GenericEntry ntDifferentTargets;
     private final GenericEntry ntID;
+    private final GenericEntry nYaw;
     private static ShuffleboardTab tab = Shuffleboard.getTab("PhotonCamera");
     AprilTagFieldLayout aprilTagFieldLayout;
     private Field2d fieldPos = new Field2d();
@@ -47,6 +48,7 @@ public class Limelight {
         tpFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
         tyawFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
         trFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
+        nYaw = tab.add("Yaw", 0).getEntry();
 
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
@@ -56,7 +58,6 @@ public class Limelight {
     }
 
     public void outputToShuffleBoard() {
-
         PhotonPipelineResult result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
         Transform3d cameraToCenterOfBot = new Transform3d(
@@ -72,6 +73,7 @@ public class Limelight {
 
             ntHasTarget.setBoolean(hasTargets);
             ntID.setInteger(target.getFiducialId());
+            nYaw.setDouble(getCameraYaw());
 
             ArrayList<PhotonTrackedTarget> diffrentID = new ArrayList<>(result.getTargets());
             Long[] fiducialIDs = new Long[diffrentID.size()];
@@ -81,6 +83,7 @@ public class Limelight {
 
             }
         }
+
     }
 
     public void updateValues() {
@@ -92,6 +95,7 @@ public class Limelight {
         //tpFilter.calculate();
         //trFilter.calculate();
     }
+
 
     public Pose3d getCameraPosition() {
         PhotonPipelineResult result = camera.getLatestResult();
@@ -110,7 +114,23 @@ public class Limelight {
                 cameraToCenterOfBot);
     }
 
+    public double getCameraYaw() {
+        PhotonPipelineResult result = camera.getLatestResult();
+        if (!result.hasTargets()){
+            return 0;
+        }
+        PhotonTrackedTarget target1 = result.getBestTarget();
+        return -target1.getYaw();
+    }
 
+    public double getCameraPitch() {
+        PhotonPipelineResult result = camera.getLatestResult();
+        if (!result.hasTargets()) {
+            return 0;
+        }
+        PhotonTrackedTarget target1 = result.getBestTarget();
+        return -target1.getPitch();
+    }
 
 }
 
