@@ -2,6 +2,7 @@ package frc.robot.sensors;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -15,12 +16,15 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import frc.robot.Constants.Camera;
 import edu.wpi.first.math.filter.MedianFilter;
+
+import javax.swing.text.Position;
 import java.io.IOException;
 import java.util.ArrayList;
 import static frc.robot.Constants.Camera.xPos;
 
 
 public class Limelight {
+
     PhotonCamera camera;
     public final GenericEntry ntHasTarget;
     public final GenericEntry ntDifferentTargets;
@@ -29,6 +33,10 @@ public class Limelight {
     AprilTagFieldLayout aprilTagFieldLayout;
     private Field2d fieldPos = new Field2d();
 
+    private MedianFilter xFilter;
+    private MedianFilter yFilter;
+    private MedianFilter yawFilter;
+,l
     public Limelight() {
         camera = new PhotonCamera("OV5647");
         ntHasTarget = tab.add("HasTarget", false).getEntry();
@@ -40,9 +48,10 @@ public class Limelight {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
         } catch(IOException e){
             DriverStation.reportError("error loading field position file", false);
+
         }
     }
-
+    
     public void outputToShuffleBoard() {
 
         PhotonPipelineResult result = camera.getLatestResult();
@@ -50,6 +59,7 @@ public class Limelight {
         Transform3d cameraToCenterOfBot = new Transform3d(
                 new Translation3d(xPos, Camera.yPos, Camera.zPos),
                 new Rotation3d(Camera.roll, Camera.pitch, Camera.yaw));
+
 
 
         if (target != null) {
