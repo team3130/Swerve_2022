@@ -65,6 +65,14 @@ public class Limelight {
         zFilter.calculate(pose3d.getZ());
         yawFilter.calculate(pose3d.getRotation().getAngle());
     }
+
+    public Pose2d updateFilters2d() {
+        Pose3d pose3d = getCameraPosition();
+        Double x = xFilter.calculate(pose3d.getX());
+        Double y = yFilter.calculate(pose3d.getY());
+        Double yaw = yawFilter.calculate(pose3d.getRotation().getAngle());
+        return new Pose2d(new Translation2d(x, y), new Rotation2d(yaw));
+    }
     
     public void outputToShuffleBoard() {
 
