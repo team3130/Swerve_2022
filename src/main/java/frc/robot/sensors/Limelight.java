@@ -20,8 +20,6 @@ import edu.wpi.first.math.filter.MedianFilter;
 import javax.swing.text.Position;
 import java.io.IOException;
 import java.util.ArrayList;
-import static frc.robot.Constants.Camera.xPos;
-
 
 public class Limelight {
 
@@ -35,29 +33,46 @@ public class Limelight {
 
     private MedianFilter xFilter;
     private MedianFilter yFilter;
+    private MedianFilter zFilter;
     private MedianFilter yawFilter;
-,l
+    private MedianFilter pitchFilter;
+    private MedianFilter rollFilter;
+
     public Limelight() {
         camera = new PhotonCamera("OV5647");
         ntHasTarget = tab.add("HasTarget", false).getEntry();
         ntDifferentTargets = tab.add("DifferentTargets", new Long[0]).getEntry();
         ntID = tab.add("ID", 0).getEntry();
 
+        xFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
+        yFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
+        zFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
+        yawFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
+        pitchFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
+        rollFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
 
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
         } catch(IOException e){
             DriverStation.reportError("error loading field position file", false);
-
         }
+    }
+
+    public void updateFilters() {
+        Pose3d pose3d = getCameraPosition();
+        xFilter.calculate(pose3d.getX());
+        yFilter.calculate(pose3d.getY());
+        zFilter.calculate(pose3d.getZ());
+        yawFilter.calculate(pose3d.getRotation().getAngle());
     }
     
     public void outputToShuffleBoard() {
 
         PhotonPipelineResult result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
+        updateFilters();
         Transform3d cameraToCenterOfBot = new Transform3d(
-                new Translation3d(xPos, Camera.yPos, Camera.zPos),
+                new Translation3d(Camera.xPos, Camera.yPos, Camera.zPos),
                 new Rotation3d(Camera.roll, Camera.pitch, Camera.yaw));
 
 
@@ -89,11 +104,13 @@ public class Limelight {
         }
         PhotonTrackedTarget target = result.getBestTarget();
         // x is forward, y is left, z is up
-            Transform3d bestCameraToTarget = target.getBestCameraToTarget();
+        Transform3d bestCameraToTarget = target.getBestCameraToTarget();
+
+        updateFilters();
 
         // the matrix transformation for the camera to the center of the bot
         Transform3d cameraToCenterOfBot = new Transform3d(
-                new Translation3d(xPos, Camera.yPos, Camera.zPos),
+                new Translation3d(Camera.xPos, Camera.yPos, Camera.zPos),
                 new Rotation3d(Camera.roll, Camera.pitch, Camera.yaw));
 
         return PhotonUtils.estimateFieldToRobotAprilTag(
@@ -101,11 +118,5 @@ public class Limelight {
                 aprilTagFieldLayout.getTagPose(target.getFiducialId()).get(),
                 cameraToCenterOfBot);
     }
-
-
-
-
-
-
 }
 
