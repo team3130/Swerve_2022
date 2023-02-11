@@ -140,7 +140,7 @@ public class Chassis extends SubsystemBase {
       };
   }
 
-  public void updateOdometryFromSwerve() {
+  /*public void updateOdometryFromSwerve() {
       double currentTime = Timer.getFPGATimestamp();
       m_odometry.updateWithTime(currentTime, Navx.getRotation(), generatePoses());
 
@@ -150,11 +150,22 @@ public class Chassis extends SubsystemBase {
           // start with using the default matrix for confidence
           m_odometry.addVisionMeasurement(positionAccordingToCamera, currentTime);
       }
-  }
+  }*/
 
+    public void updateOdometryFromAprilTags() {
+        double currentTime = Timer.getFPGATimestamp();
+        m_odometry.updateWithTime(currentTime, Navx.getRotation(), generatePoses());
+
+        Pose2d positionAccordingToAprilTags = m_limelight.getPositions();
+
+        if (positionAccordingToAprilTags != null) {
+            // start with using the default matrix for confidence
+            m_odometry.addVisionMeasurement(positionAccordingToAprilTags, currentTime);
+        }
+    }
   @Override
   public void periodic() {
-    updateOdometryFromSwerve();
+    updateOdometryFromAprilTags();
 
       outputToShuffleboard();
 

@@ -35,8 +35,9 @@ public class Limelight {
     private MedianFilter yFilter;
     private MedianFilter zFilter;
     private MedianFilter yawFilter;
-    private MedianFilter pitchFilter;
-    private MedianFilter rollFilter;
+
+    private MedianFilter TimeFilter;
+
 
     public Limelight() {
         camera = new PhotonCamera("OV5647");
@@ -48,8 +49,6 @@ public class Limelight {
         yFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
         zFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
         yawFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
-        pitchFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
-        rollFilter = new MedianFilter(Constants.kLimelightFilterBufferSize);
 
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
@@ -66,7 +65,7 @@ public class Limelight {
         yawFilter.calculate(pose3d.getRotation().getAngle());
     }
 
-    public Pose2d updateFilters2d() {
+    public Pose2d getPositions() {
         Pose3d pose3d = getCameraPosition();
         Double x = xFilter.calculate(pose3d.getX());
         Double y = yFilter.calculate(pose3d.getY());
