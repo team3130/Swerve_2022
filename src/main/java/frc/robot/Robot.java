@@ -21,22 +21,17 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  boolean cameraIsGettingData = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  Timer odometryTimer = new Timer();
-
-  int readingCounter = 0;
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new  RobotContainer();
-    odometryTimer.start();
-
-
   }
 
   /**
@@ -53,22 +48,17 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-   if (odometryTimer.hasElapsed(1.5)){
-     m_robotContainer.resetOdometry();
-     odometryTimer.reset();
-     odometryTimer.stop();
-   }
 
-   if (odometryTimer.hasElapsed(1.5) /*&& m_robotContainer.GetLimeLight().getCameraPosition() != null)*/ ){
-/*       readingCounter++;
-
-     if (readingCounter>5) {*/
-      m_robotContainer.resetOdometry();
-       odometryTimer.reset();
-       odometryTimer.stop();
-
-     }
-   }
+    // April tag odometry stuff
+    if (cameraIsGettingData) {
+     m_robotContainer.updatePosition();
+    }
+    else {
+      if (m_robotContainer.tryUpdatePosition() > 5) {
+        cameraIsGettingData = true;
+      }
+    }
+  }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
@@ -96,10 +86,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    m_robotContainer.m_limelight.outputToShuffleBoard();
-
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {

@@ -16,6 +16,9 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    // whether to print stack traces or not
+    public static final boolean debugMode = true;
+
     /**
      * CAN
      */
@@ -31,6 +34,7 @@ public final class Constants {
     public final static int CANCoderBottomRight = 11;
     public final static int CANCoderTopLeft = 9;
     public final static int CANCoderBottomLeft = 3;
+
     // Order should match side
     public static final int[] turningId = new int[] {CAN_LeftFrontSteer, CAN_LeftBackSteer, CAN_RightFrontSteer, CAN_RightBackSteer};
     public static final int[] spinningId = new int[] {CAN_LeftFrontDrive, CAN_LeftBackDrive, CAN_RightFrontDrive, CAN_RightBackDrive};
@@ -48,12 +52,12 @@ public final class Constants {
      * Camera constants
      */
     public static class Camera {
-        // TODO: Find these values
         // The position and orientation of the camera in meters
-        public static final double xPos = Units.inchesToMeters(12);;
-        public static final double yPos = Units.inchesToMeters(0);;
+        public static final double xPos = Units.inchesToMeters(12);
+        public static final double yPos = Units.inchesToMeters(0);
         public static final double zPos = Units.inchesToMeters(4.5);
 
+        // TODO: Find these values
         public static final double pitch = 0;
         public static final double yaw = 0;
         public static final double roll = 0;
@@ -61,7 +65,12 @@ public final class Constants {
         public static double confidenceN1 = 0;
         public static double confidenceN2 = 0;
         public static double confidenceN3 = 0;
+
+        public final static int kMedianFilterWindowSize = 5;
     }
+
+    // for the KugelMediaFilter
+    public static final double kKugelMedianFilterP = 1/(2*Math.PI);
 
     /**
      * Gear ratio and ticks per rev
@@ -77,15 +86,6 @@ public final class Constants {
     public static final double DriveTicksToMetersPerSecond = DriveTicksToMeters * 10; // multiply by velocity
     public final static double kMaxSteerVoltage = 5d;
     public final static double kMaxDriveVoltage = 9d;
-
-    public final static double kLimelightHeight = Units.inchesToMeters(60);
-    public final static int kLimelightFilterBufferSize = 5;
-
-    public final static double Cameraheight_m = 0;
-
-    public final static double Camerawidth_m = 0;
-
-    public final static double Cameralength_m = 0;
 
     /**
      * Length and width as measured as distances between center of wheels

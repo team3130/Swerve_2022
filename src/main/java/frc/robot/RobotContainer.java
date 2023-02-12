@@ -19,6 +19,7 @@ import frc.robot.commands.ZeroEverything;
 import frc.robot.commands.ZeroWheels;
 import frc.robot.sensors.Limelight;
 import frc.robot.subsystems.Chassis;
+import frc.robot.supportingClasses.OdoPosition;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -32,7 +33,6 @@ public class RobotContainer {
   private final Chassis m_chassis;
 
   public final Limelight m_limelight;
-  public int readingCounter;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -50,10 +50,23 @@ public class RobotContainer {
    return m_limelight;
   }
 
-
   public static Joystick getDriverGamepad() {
     return m_driverGamepad;
   }
+
+  public int tryUpdatePosition() {
+    refreshPosition();
+    return m_limelight.getNumberOfSuccesses();
+  }
+
+  public OdoPosition refreshPosition() {
+    return m_limelight.calculateCameraPosition();
+  }
+
+  public void updatePosition() {
+    m_chassis.updateOdometryFromAprilTags(refreshPosition());
+  }
+
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -65,16 +78,5 @@ public class RobotContainer {
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_A).whileTrue(new ZeroWheels(m_chassis));
     new JoystickButton(m_driverGamepad, Constants.Buttons.LST_BTN_B).whileTrue(new ZeroEverything(m_chassis, m_limelight));
     SmartDashboard.putData(new FlipFieldOrriented(m_chassis));
-  }
-
-  public void resetOdometry(){
-    if(m_limelight.getCameraPosition().toPose2d()!= null){
-      readingCounter++;
-    }
-    if (readingCounter>5) {
-      m_chassis.resetPositionTo(m_limelight.getCameraPosition().toPose2d());
-
-
-    }
   }
 }

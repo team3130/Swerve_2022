@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,8 +25,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.sensors.Navx;
+import frc.robot.supportingClasses.OdoPosition;
 import frc.robot.swerve.SwerveModule;
 import frc.robot.sensors.Limelight;
+
+import static edu.wpi.first.math.VecBuilder.fill;
 
 
 public class Chassis extends SubsystemBase {
@@ -50,6 +54,8 @@ public class Chassis extends SubsystemBase {
   private final Field2d nField;
 
   private boolean fieldRelative = true;
+
+  private Matrix<N3, N1> confidenceMatrix;
 
   public Limelight m_limelight;
 
@@ -86,6 +92,11 @@ public class Chassis extends SubsystemBase {
       SmartDashboard.putData(nField);
 
       m_limelight = limelight;
+
+      confidenceMatrix = new VecBuilder<>(Nat.N3()).fill(
+              Constants.Camera.confidenceN1,
+              Constants.Camera.confidenceN2,
+              Constants.Camera.confidenceN3);
   }
 
   public void flipBool() {
@@ -109,14 +120,14 @@ public class Chassis extends SubsystemBase {
   }
 
   public void outputToShuffleboard() {
-      if (lastKpRead != Kp.getDouble(lastKpRead) ){
+      if (lastKpRead != Kp.getDouble(lastKpRead)) {
           lastKpRead = Kp.getDouble(lastKpRead);
           modules[Constants.Side.LEFT_FRONT].updatePValue(lastKpRead);
           modules[Constants.Side.LEFT_BACK].updatePValue(lastKpRead);
           modules[Constants.Side.RIGHT_FRONT].updatePValue(lastKpRead);
           modules[Constants.Side.RIGHT_BACK].updatePValue(lastKpRead);
       }
-      if (lastKdRead != Kd.getDouble(lastKdRead) ){
+      if (lastKdRead != Kd.getDouble(lastKdRead)) {
           lastKdRead = Kd.getDouble(lastKdRead);
           modules[Constants.Side.LEFT_FRONT].updateDValue(lastKdRead);
           modules[Constants.Side.LEFT_BACK].updateDValue(lastKdRead);
@@ -140,32 +151,20 @@ public class Chassis extends SubsystemBase {
       };
   }
 
-  /*public void updateOdometryFromSwerve() {
+  public void updateOdometryEncoders() {
       double currentTime = Timer.getFPGATimestamp();
       m_odometry.updateWithTime(currentTime, Navx.getRotation(), generatePoses());
+  }
 
-      Pose2d positionAccordingToCamera = m_limelight.getCameraPosition().toPose2d();
-
-      if (positionAccordingToCamera != null) {
-          // start with using the default matrix for confidence
-          m_odometry.addVisionMeasurement(positionAccordingToCamera, currentTime);
-      }
-  }*/
-
-    public void updateOdometryFromAprilTags() {
-        double currentTime = Timer.getFPGATimestamp();
-        m_odometry.updateWithTime(currentTime, Navx.getRotation(), generatePoses());
-
-        Pose2d positionAccordingToAprilTags = m_limelight.getPositions();
-
-        if (positionAccordingToAprilTags != null) {
-            // start with using the default matrix for confidence
-            m_odometry.addVisionMeasurement(positionAccordingToAprilTags, currentTime);
-        }
+    public void updateOdometryFromAprilTags(OdoPosition pose) {
+        // start with using the default matrix for confidence
+        m_odometry.addVisionMeasurement(pose.getPosition(), pose.getTime());
+        // m_odometry.addVisionMeasurement(pose.getPosition(), pose.getTime(), confidenceMatrix);
     }
+
   @Override
   public void periodic() {
-    updateOdometryFromAprilTags();
+      updateOdometryEncoders();
 
       outputToShuffleboard();
 
